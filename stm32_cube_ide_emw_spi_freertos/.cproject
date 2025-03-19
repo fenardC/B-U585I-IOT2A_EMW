@@ -51,7 +51,7 @@
 									<listOptionValue builtIn="false" value="../../applications/emw"/>
 									<listOptionValue builtIn="false" value="../../core/inc"/>
 									<listOptionValue builtIn="false" value="../../drivers/cmsis/device/st/stm32u5xx/include"/>
-									<listOptionValue builtIn="false" value="../../drivers/cmsis/Include"/>
+									<listOptionValue builtIn="false" value="../../drivers/cmsis/include"/>
 									<listOptionValue builtIn="false" value="../../drivers/emw"/>
 									<listOptionValue builtIn="false" value="../../drivers/stm32u5xx_hal_driver/inc"/>
 									<listOptionValue builtIn="false" value="../../drivers/stm32u5xx_hal_driver/inc/Legacy"/>
@@ -75,13 +75,13 @@
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.optimization.level.1164238785" name="Optimization level" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.optimization.level.value.o3" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.includepaths.513571403" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="../../applications/emw"/>
-									<listOptionValue builtIn="false" value="../../lib"/>
 									<listOptionValue builtIn="false" value="../../core/inc"/>
 									<listOptionValue builtIn="false" value="../../drivers/cmsis/device/st/stm32u5xx/include"/>
 									<listOptionValue builtIn="false" value="../../drivers/cmsis/include"/>
 									<listOptionValue builtIn="false" value="../../drivers/emw"/>
 									<listOptionValue builtIn="false" value="../../drivers/stm32u5xx_hal_driver/inc"/>
 									<listOptionValue builtIn="false" value="../../drivers/stm32u5xx_hal_driver/inc/Legacy"/>
+									<listOptionValue builtIn="false" value="../../lib"/>
 									<listOptionValue builtIn="false" value="../../middlewares/freertos/source/include/"/>
 									<listOptionValue builtIn="false" value="../../middlewares/freertos/source/portable/GCC/ARM_CM33_NTZ/non_secure/"/>
 								</option>

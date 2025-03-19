@@ -60,6 +60,8 @@ extern "C" {
 #define configUSE_MINI_LIST_ITEM                   1
 #define configMESSAGE_BUFFER_LENGTH_TYPE           size_t
 #define configUSE_NEWLIB_REENTRANT                 1
+#define configNUM_THREAD_LOCAL_STORAGE_POINTERS    1
+
 
 /******************************************************************************/
 /* Software timer related definitions. ****************************************/
@@ -74,7 +76,7 @@ extern "C" {
 /******************************************************************************/
 #define configSUPPORT_STATIC_ALLOCATION            0
 #define configSUPPORT_DYNAMIC_ALLOCATION           1
-#define configTOTAL_HEAP_SIZE                      (100*1024)
+#define configTOTAL_HEAP_SIZE                      (130*1024)
 #define configENABLE_HEAP_PROTECTOR                1
 
 /******************************************************************************/

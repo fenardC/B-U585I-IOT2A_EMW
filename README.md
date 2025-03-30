@@ -5,6 +5,10 @@ Wi-Fi examples and driver written with C/C++ languages
 
 This project aims at demonstrating some Wi-Fi examples and driver written with C/C++ languages.
 
+> [!IMPORTANT]
+> Do not forget to set your Wi-Fi credentials in the `main.hpp` to connect correctly.
+
+
 _Cyril FENARD._
 
 # Key words

@@ -17,8 +17,9 @@ CRTP, DMA, EMW, FreeRTOS, LwIP, RAII, SSE, SPI, STM32, TCP, UDP, Wi-Fi
 
 ## Software
 
-**C++** **STM32CubeIDE** **Cmake** **Ninja** **Visual Studio Code**
-**Windows** **Cygwin** **Linux** **VirtualBox**
+**C++**, **STM32CubeIDE**, **Cmake**, **Ninja**, **Visual Studio Code**
+
+**Windows**, **Cygwin**, **Linux**, **VirtualBox**
 
 
 # Check development environment
@@ -39,7 +40,7 @@ CRTP, DMA, EMW, FreeRTOS, LwIP, RAII, SSE, SPI, STM32, TCP, UDP, Wi-Fi
     version=1.19.0
 
     $ /cygdrive/c/Program\ Files/Cppcheck/cppcheck --version
-    Cppcheck 2.16.0
+    Cppcheck 2.20.0
 
     $ iperf -v
     iperf version 2.0.13 (21 Jan 2019) pthreads

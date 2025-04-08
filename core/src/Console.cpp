@@ -21,12 +21,14 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #endif /* COMPILATION_WITH_FREERTOS) */
+#include "stm32u5xx_hal.h"
 #include <stdlib.h>
 #include <string.h>
 #include <inttypes.h>
 #include <stdbool.h>
 #include <cstdio>
 #include <iostream>
+
 //#define STD_PRINTF(...) std::printf(__VA_ARGS__);
 #define STD_PRINTF(...)
 
@@ -76,9 +78,7 @@ void Console::addInHistory(const char *cmdPtr)
       for (; i > 0U; i--) {
         this->history[i] = this->history[i - 1];
       }
-
       this->history[0] = this->duplicateString(cmdPtr);
-
       if (this->historyCount < (ARRAY_COUNT_OF(this->history) - 1)) {
         this->historyCount++;
       }
@@ -167,8 +167,6 @@ void Console::quit(void)
 
 class Cmd **Console::listMatchingCommands(const char *nameStringPtr, int32_t &matchCountRef)
 {
-    STD_PRINTF("Console::listMatchingCommand()>\n")
-
     matchCountRef = 0;
     if (nullptr != nameStringPtr) {
       const size_t name_length = strlen(nameStringPtr);
@@ -179,8 +177,6 @@ class Cmd **Console::listMatchingCommands(const char *nameStringPtr, int32_t &ma
         class Cmd **cmds_ptr = this->cmdsPtr;
         while (nullptr != *cmds_ptr) {
           const char *const cmd_name_ptr = (*cmds_ptr)->getName();
-          STD_PRINTF("Console::listMatchingCommand(): %p %s\n", static_cast<void *>(*cmds_ptr), cmd_name_ptr)
-
           if (strncmp(cmd_name_ptr, nameStringPtr, name_length) == 0) {
             if (strlen(cmd_name_ptr) == name_length) {
               matchCountRef = 1;
@@ -191,7 +187,6 @@ class Cmd **Console::listMatchingCommands(const char *nameStringPtr, int32_t &ma
             matchCountRef++;
           }
           cmds_ptr++;
-          STD_PRINTF("Console::listMatchingCommand(): %p\n", static_cast<void *>(*cmds_ptr))
         }
       }
     }
@@ -215,8 +210,6 @@ unsigned char Console::getUserInputChar(void)
 {
   unsigned char ret = '\0';
   const int c = std::cin.get();
-  STD_PRINTF("Console::getUserInputChar(): %c %" PRIx32 "\n", c, static_cast<uint32_t>(c))
-
   if (0 < c) {
     ret = static_cast<unsigned char>(c);
   }
@@ -225,43 +218,44 @@ unsigned char Console::getUserInputChar(void)
 
 unsigned char Console::getUserInputCharWithFiltering(void)
 {
-  unsigned char first = this->getUserInputChar();
-  if (Console::ESC == first) {
-    unsigned char second;
-    first = this->getUserInputChar();
-    second = this->getUserInputChar();
-    if ((first == '[') && (second == 50)) {
-      /* discard 0x7E */
-      (void)this->getUserInputChar();
-      return Console::KEY_INSERT_MODE;
-    }
-    if ((first == 79) && (second == 83)) {
-      return '-';
-    }
-    if ((first == 79) && (second == 82)) {
-      return '*';
-    }
-    if ((first == 79) && (second == 81)) {
-      return '/';
-    }
-    if ((first == '[') && (second == 65)) {
-      STD_PRINTF("Console::getUserInputCharWithFiltering()< -> KEY_UP\n")
-      return Console::KEY_UP;
-    }
-    if ((first == '[') && (second == 66)) {
-      STD_PRINTF("Console::getUserInputCharWithFiltering()< -> KEY_DOWN\n")
-      return Console::KEY_DOWN;
-    }
-    if ((first == '[') && (second == 67)) {
-      STD_PRINTF("Console::getUserInputCharWithFiltering()< -> KEY_RIGHT\n")
-      return Console::KEY_RIGHT;
-    }
-    if ((first == '[') && (second == 68)) {
-      STD_PRINTF("Console::getUserInputCharWithFiltering()< -> KEY_LEFT\n")
-      return Console::KEY_LEFT;
+  const unsigned char one_char = this->getUserInputChar();
+  if (Console::ESC == one_char) {
+    HAL_Delay(1);
+    {
+      const unsigned char first = this->getUserInputChar();
+      HAL_Delay(1);
+      {
+        const unsigned char second = this->getUserInputChar();
+        if ((first == '[') && (second == 50)) {
+          /* discard 0x7E */
+          (void)this->getUserInputChar();
+          return Console::KEY_INSERT_MODE;
+        }
+        if ((first == 79) && (second == 83)) {
+          return '-';
+        }
+        if ((first == 79) && (second == 82)) {
+          return '*';
+        }
+        if ((first == 79) && (second == 81)) {
+          return '/';
+        }
+        if ((first == '[') && (second == 65)) {
+          return Console::KEY_UP;
+        }
+        if ((first == '[') && (second == 66)) {
+          return Console::KEY_DOWN;
+        }
+        if ((first == '[') && (second == 67)) {
+          return Console::KEY_RIGHT;
+        }
+        if ((first == '[') && (second == 68)) {
+          return Console::KEY_LEFT;
+        }
+      }
     }
   }
-  return first;
+  return one_char;
 }
 
 void Console::getUserInputString(char s_cmd[])
@@ -270,7 +264,6 @@ void Console::getUserInputString(char s_cmd[])
   uint32_t cursor_x = 0;
   unsigned char ch = 0;
   int32_t history_count = -1;
-
   s_cmd[0] = 0;
   do {
     ch = this->getUserInputCharWithFiltering();
@@ -298,7 +291,6 @@ void Console::getUserInputString(char s_cmd[])
         history_count++;
       }
       if (nullptr != this->history[history_count]) {
-        STD_PRINTF("Console::getUserInputString(): KEY_UP\n")
         std::printf("%s", Console::TERM_LINE_ERASE_STRING);
         std::printf("%s", this->promptPtr);
         std::printf("%s", this->history[history_count]);
@@ -357,7 +349,6 @@ void Console::getUserInputString(char s_cmd[])
       int32_t match_count = 0;
       s_cmd[i] = 0;
       match_list_ptr = this->listMatchingCommands(s_cmd, match_count);
-
       if (match_count == 1) {
         cmd_ptr = match_list_ptr[0];
         strncpy(s_cmd, cmd_ptr->getName(), Console::MAX_INPUT_LINE - 1);

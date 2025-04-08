@@ -18,17 +18,15 @@
   */
 #include "usart.h"
 //#include "stm32u5xx_hal_uart.h"
-
 #include <stdint.h>
 #include <string.h>
 
 int initializeStdinWithUart(void);
 int stdin_reinitialize(void);
 
-static char UartBuffer[60U];
-static const uint32_t UartBufferWriteIdxMax = sizeof(UartBuffer) / sizeof(UartBuffer[0]);
+static char UartBuffer[0x40];
 static volatile uint32_t UartBufferWriteIdx = 0;
-static uint32_t UartBufferReadIdx = 0;
+static volatile uint32_t UartBufferReadIdx = 0;
 
 static inline char CharFromUartBuffer(void);
 
@@ -63,11 +61,9 @@ static inline char CharFromUartBuffer(void)
   char ch = 0;
 
   if (UartBufferWriteIdx != UartBufferReadIdx) {
-    ch = UartBuffer[UartBufferReadIdx++];
-
-    if (UartBufferReadIdx == UartBufferWriteIdxMax) {
-      UartBufferReadIdx = 0;
-    }
+    ch = UartBuffer[UartBufferReadIdx];
+    UartBufferReadIdx++;
+    UartBufferReadIdx &= 0x0000003F;
   }
   return ch;
 }
@@ -76,10 +72,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
   if (huart == &hUart1) {
     UartBufferWriteIdx++;
-
-    if (UartBufferWriteIdx == UartBufferWriteIdxMax) {
-      UartBufferWriteIdx = 0;
-    }
+    UartBufferWriteIdx &= 0x0000003F;
     HAL_UART_Receive_IT(huart, (uint8_t *)&UartBuffer[UartBufferWriteIdx], 1);
   }
 }

@@ -120,6 +120,12 @@ void sys_init(void)
   sys_arch_protect_mutex = xSemaphoreCreateRecursiveMutex();
   LWIP_ASSERT("failed to create sys_arch_protect mutex",
               sys_arch_protect_mutex != NULL);
+#if (configQUEUE_REGISTRY_SIZE > 0)
+  {
+    static const char sys_arch_protect_mutex_name[] = {"LwIP-SysProtectMutex"};
+    vQueueAddToRegistry(sys_arch_protect_mutex, sys_arch_protect_mutex_name);
+  }
+#endif /* configQUEUE_REGISTRY_SIZE*/
 #endif /* SYS_LIGHTWEIGHT_PROT && LWIP_FREERTOS_SYS_ARCH_PROTECT_USES_MUTEX */
 }
 
@@ -210,6 +216,13 @@ err_t sys_mutex_new(sys_mutex_t *mutex)
     return ERR_MEM;
   }
 
+#if (configQUEUE_REGISTRY_SIZE > 0)
+  {
+    static const char mutex_name[] = {"LwIP-Mutex"};
+    vQueueAddToRegistry(mutex->mut, mutex_name);
+  }
+#endif /* configQUEUE_REGISTRY_SIZE*/
+
   SYS_STATS_INC_USED(mutex);
   return ERR_OK;
 }
@@ -258,6 +271,13 @@ err_t sys_sem_new(sys_sem_t *sem, u8_t initial_count)
     SYS_STATS_INC(sem.err);
     return ERR_MEM;
   }
+
+#if (configQUEUE_REGISTRY_SIZE > 0)
+  {
+    static const char semaphore_name[] = {"LwIP-Semaphore"};
+    vQueueAddToRegistry(sem->sem, semaphore_name);
+  }
+#endif /* configQUEUE_REGISTRY_SIZE*/
 
   SYS_STATS_INC_USED(sem);
 

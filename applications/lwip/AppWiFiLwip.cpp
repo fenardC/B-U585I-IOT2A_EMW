@@ -22,6 +22,7 @@
 #include "AppConsolePing.hpp"
 #include "AppConsoleScan.hpp"
 #include "AppConsoleStats.hpp"
+#include "AppDhcpService.hpp"
 #include "EmwAddress.hpp"
 #include "EmwApiEmw.hpp"
 #include "EmwNetworkStack.hpp"
@@ -221,6 +222,13 @@ void AppWiFiLwip::enableSoftAp(void)
   std::printf("          - Netmask         : %s\n", ipaddr_ntoa(&this->netifSOFTAP.netmask));
   std::printf("          - GW address      : %s\n", ipaddr_ntoa(&this->netifSOFTAP.gw));
 
+  std::printf("AppWiFiLwip::enableSoftAp(): Starting the DHCP server ...\n");
+  static AppDhcpService dhcp_service(&this->netifSOFTAP);
+  if (0 != dhcp_service.createService()) {
+    std::printf("Cannot start the DHCP server\n");
+    ErrorHandler();
+    return;
+  }
   STD_PRINTF("AppWiFiLwip::enableSoftAp()<\n\n")
 }
 

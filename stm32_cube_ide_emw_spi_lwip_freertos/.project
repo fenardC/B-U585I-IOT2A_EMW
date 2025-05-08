@@ -60,6 +60,11 @@
 			<locationURI>PARENT-1-PROJECT_LOC/applications/lwip/AppConsoleStats.cpp</locationURI>
 		</link>
 		<link>
+			<name>application/AppDhcpService.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/applications/lwip/AppDhcpService.cpp</locationURI>
+		</link>
+		<link>
 			<name>application/AppLwipServices.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/applications/lwip/AppLwipServices.cpp</locationURI>

@@ -10,11 +10,12 @@ This project aims at demonstrating some Wi-Fi examples and driver written with C
 
 > [!IMPORTANT]
 > In case a local echo server is running, the firewall TCP port used in this case MUST be allowed on the hosting machine.
+> The same is also to be done for iperf tests.
 
 _Cyril FENARD._
 
 # Key words
-DMA, EMW, FreeRTOS, LwIP, SPI, STM32, Wi-Fi
+DMA, EMW, FreeRTOS, LwIP, SSE, SPI, STM32, Wi-Fi
 
 ## Topics
 
@@ -22,21 +23,34 @@ DMA, EMW, FreeRTOS, LwIP, SPI, STM32, Wi-Fi
 
 ## Software
 
-**C++** **STM32CubeIDE** **Cmake**
+**C++** **STM32CubeIDE** **Cmake** **Ninja**
 **Windows** **Cygwin** **Linux** **VirtualBox**
 
 
 # Check development environment
+
+## Tools for windows and cygwin as shell only
+
 ```shell
     $ uname -smov
     CYGWIN_NT-10.0-19045 2025-01-29 19:46 UTC x86_64 Cygwin
+
+    $ export PATH=/cygdrive/c/Program\ Files/CMake/bin/:$PATH
+
+    $ export ARM_GCC_PATH=c:/Program\ Files\ \(x86\)/Arm\ GNU\ Toolchain\ arm-none-eabi/14.2\ rel1/bin
+
+    $ export PATH=/cygdrive/c/NINJA/:$PATH
 
     $ cat /cygdrive/c/ST/STM32CubeIDE_1_16_1/STM32CubeIDE/.eclipseproduct | grep version
     version=1.16.1
 
     $ /cygdrive/c/Program\ Files/Cppcheck/cppcheck --version
     Cppcheck 2.16.0
+```
 
+## Tools with Linux
+
+```shell
     $ uname -srvimo
     Linux 6.11.9-100.fc39.x86_64 #1 SMP PREEMPT_DYNAMIC Sun Nov 17 18:52:19 UTC 2024 x86_64 unknown GNU/Linux
 
@@ -123,15 +137,13 @@ MEM_SIZE           :  61440
 PBUF_POOL_BUFSIZE  :   1544
 
 Wi-Fi network interface initialization (SOFTAP)
-WiFiNetwork::netifExtCallbackFunction() -> (0001) LWIP_NSC_NETIF_ADDED
-[  1553] Wi-Fi driver ready:
+[  1542] Wi-Fi driver ready (SOFTAP):
           - Device Name    : EMW3080B.
           - Device ID      : MXCHIP-WIFI.
           - Device Version : V2.3.4.
 
 Wi-Fi network interface initialization (STATION)
-WiFiNetwork::netifExtCallbackFunction() -> (0001) LWIP_NSC_NETIF_ADDED
-[  1588] Wi-Fi driver ready:
+[  1572] Wi-Fi driver ready (STATION):
           - Device Name    : EMW3080B.
           - Device ID      : MXCHIP-WIFI.
           - Device Version : V2.3.4.
@@ -140,49 +152,37 @@ AppWiFiLwip::checkIoSpeed()> (130 x (1542 + 1542)) ...
 transfered: 400920 bytes, time: 307 ms, Speed: 10447 Kbps
 
 Start Software enabled Access Point with "MyHotSpot"
-WiFiNetwork::informOfDriverStatus() -> EmwApiBase::eWIFI_EVENT_AP_UP
-[  2271] Wi-Fi interface ready:
+[  2264] Wi-Fi interface ready (SOFTAP):
           - name        : "MA".
           - hostname    : "lwip-softap".
           - mtu         : 1500.
-SoftAP MAC address 84.9D.C2.96.C8.E1
-WiFiNetwork::netifExtCallbackFunction() -> (0004) LWIP_NSC_LINK_CHANGED
-WiFiNetwork::netifExtCallbackFunction() -> (0008) LWIP_NSC_STATUS_CHANGED
-WiFiNetwork::netifExtCallbackFunction() -> (04f0) LWIP_NSC_IPV4_ADDR_VALID | LWIP_NSC_IPV4_SETTINGS_CHANGED
-| LWIP_NSC_IPV4_NETMASK_CHANGED | LWIP_NSC_IPV4_GATEWAY_CHANGED | LWIP_NSC_IPV4_ADDRESS_CHANGED
+          - MAC         : 84.9D.C2.96.C8.E1
 
-[  2318] Network Interface connected:
+[  2280] Network Interface ready (SOFTAP):
           - IP address      : 10.10.10.1
           - Netmask         : 255.255.255.0
           - GW address      : 10.10.10.1
+Starting the DHCP server ...
 
 Wi-Fi scan
 ######### Scan 10 BSS ##########
 ######### End of Scan ##########
 
+SSE Web server started (SOFTAP)
+
 Wi-Fi connection
 
 AppWiFiLwip::joinAccessPoint()> joining "XXXXXXX" with "ZZZZZZZZZZ" ...
-WiFiNetwork::informOfDriverStatus() -> EmwApiBase::eWIFI_EVENT_STA_UP
-[  7711] Wi-Fi interface ready:
+cccccccccccccccccccccccccccc
+[  6690] Wi-Fi interface ready (STATION):
           - name        : "MS".
           - hostname    : "lwip-sta".
           - mtu         : 1500.
           - MAC         : 84.9D.C2.96.C8.E0
-WiFiNetwork::netifExtCallbackFunction() -> (0004) LWIP_NSC_LINK_CHANGED
-WiFiNetwork::netifExtCallbackFunction() -> (0008) LWIP_NSC_STATUS_CHANGED
-[  7741] Setting IPv6 link-local address
-WiFiNetwork::netifExtCallbackFunction() -> (0200) LWIP_NSC_IPV6_ADDR_STATE_CHANGED
-[  7752] Calling dhcp_start()
-WiFiNetwork::netifExtCallbackFunction() -> (0200) LWIP_NSC_IPV6_ADDR_STATE_CHANGED
-WiFiNetwork::netifExtCallbackFunction() -> (0200) LWIP_NSC_IPV6_ADDR_STATE_CHANGED
-WiFiNetwork::netifExtCallbackFunction() -> (0200) LWIP_NSC_IPV6_ADDR_STATE_CHANGED
-WiFiNetwork::netifExtCallbackFunction() -> (0200) LWIP_NSC_IPV6_ADDR_STATE_CHANGED
-WiFiNetwork::netifExtCallbackFunction() -> (0200) LWIP_NSC_IPV6_ADDR_STATE_CHANGED
-WiFiNetwork::netifExtCallbackFunction() -> (04f0) LWIP_NSC_IPV4_ADDR_VALID | LWIP_NSC_IPV4_SETTINGS_CHANGED
-| LWIP_NSC_IPV4_NETMASK_CHANGED | LWIP_NSC_IPV4_GATEWAY_CHANGED | LWIP_NSC_IPV4_ADDRESS_CHANGED
-
-[ 14843] Network Interface connected:
+[  6708] Setting IPv6 link-local address
+[  6711] Calling dhcp_start()
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+[ 17314] Network Interface connected (STATION):
           - IP address      : 192.168.1.113
           - Netmask         : 255.255.255.0
           - GW address      : 192.168.1.254

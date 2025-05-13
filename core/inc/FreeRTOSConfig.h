@@ -55,7 +55,7 @@ extern "C" {
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION    0
 #define configMAX_PRIORITIES                       32
 #define configMINIMAL_STACK_SIZE                   128
-#define configMAX_TASK_NAME_LEN                    24
+#define configMAX_TASK_NAME_LEN                    20
 #define configQUEUE_REGISTRY_SIZE                  24
 #define configUSE_MINI_LIST_ITEM                   1
 #define configMESSAGE_BUFFER_LENGTH_TYPE           size_t

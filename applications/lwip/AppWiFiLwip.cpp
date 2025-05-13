@@ -23,6 +23,7 @@
 #include "AppConsoleScan.hpp"
 #include "AppConsoleStats.hpp"
 #include "AppDhcpService.hpp"
+#include "AppHttpSSE.hpp"
 #include "EmwAddress.hpp"
 #include "EmwApiEmw.hpp"
 #include "EmwNetworkStack.hpp"
@@ -107,6 +108,10 @@ extern "C" {
     }
 
     {
+      class AppHttpSSE sse(the_application.netifSOFTAP);
+      sse.initializeServer(the_application.netifSOFTAP.ip_addr.u_addr.ip4.addr, 80);
+      std::printf("\nSSE Web server started (SOFTAP)\n");
+
       std::printf("\nWi-Fi connection\n");
       the_application.connectAp(WIFI_SSID, WIFI_PASSWORD);
       {
@@ -226,9 +231,9 @@ void AppWiFiLwip::enableSoftAp(void)
   std::printf("          - Netmask         : %s\n", ipaddr_ntoa(&this->netifSOFTAP.netmask));
   std::printf("          - GW address      : %s\n", ipaddr_ntoa(&this->netifSOFTAP.gw));
 
-  std::printf("AppWiFiLwip::enableSoftAp(): Starting the DHCP server ...\n");
-  static AppDhcpService dhcp_service(&this->netifSOFTAP);
-  if (0 != dhcp_service.createService()) {
+  std::printf("Starting the DHCP server ...\n");
+  static AppDhcpService dhcp_server(&this->netifSOFTAP);
+  if (0 != dhcp_server.createService()) {
     std::printf("Cannot start the DHCP server\n");
     ErrorHandler();
     return;

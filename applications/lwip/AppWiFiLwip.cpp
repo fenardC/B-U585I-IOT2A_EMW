@@ -23,6 +23,7 @@
 #include "AppConsoleScan.hpp"
 #include "AppConsoleStats.hpp"
 #include "AppDhcpService.hpp"
+#include "AppConsoleDownload.hpp"
 #include "AppHttpSSE.hpp"
 #include "EmwAddress.hpp"
 #include "EmwApiEmw.hpp"
@@ -114,13 +115,15 @@ extern "C" {
 
       std::printf("\nWi-Fi connection\n");
       the_application.connectAp(WIFI_SSID, WIFI_PASSWORD);
+
       {
         class AppConsoleEcho echo(nullptr);
+        class AppConsoleDownload http(nullptr);
         class AppConsoleIperf iperf(&the_application.netifSTA);
         class AppConsolePing ping(&the_application.netifSTA);
         class AppConsoleScan scan(nullptr);
         class AppConsoleStats stats(nullptr);
-        class Cmd *cmds[] = {&echo, &iperf, &ping, &scan, &stats, nullptr};
+        class Cmd *cmds[] = {&echo, &http, &iperf, &ping, &scan, &stats, nullptr};
         class Console the_console("app>", cmds);
 
         the_console.run();
@@ -133,6 +136,7 @@ extern "C" {
     std::printf("\nWi-Fi network interface un-initialization (SOFTAP)\n");
     the_application.tearDownSoftApNetworkInterface();
     lwip_socket_thread_cleanup();
+
     for (;;) {
       std::printf(".");
       vTaskDelay(5000U);

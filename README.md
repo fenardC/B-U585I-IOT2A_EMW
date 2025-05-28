@@ -15,7 +15,7 @@ This project aims at demonstrating some Wi-Fi examples and driver written with C
 _Cyril FENARD._
 
 # Key words
-DMA, EMW, FreeRTOS, LwIP, SSE, SPI, STM32, Wi-Fi
+DMA, EMW, FreeRTOS, LwIP, SSE, SPI, STM32, TCP, UDP, Wi-Fi
 
 ## Topics
 
@@ -29,7 +29,7 @@ DMA, EMW, FreeRTOS, LwIP, SSE, SPI, STM32, Wi-Fi
 
 # Check development environment
 
-## Tools for windows and cygwin as shell only
+## Tools for windows and Cygwin as shell only
 
 ```shell
     $ uname -smov
@@ -46,6 +46,9 @@ DMA, EMW, FreeRTOS, LwIP, SSE, SPI, STM32, Wi-Fi
 
     $ /cygdrive/c/Program\ Files/Cppcheck/cppcheck --version
     Cppcheck 2.16.0
+
+    $ iperf -v
+    iperf version 2.0.13 (21 Jan 2019) pthreads
 ```
 
 ## Tools with Linux
@@ -111,20 +114,20 @@ DMA, EMW, FreeRTOS, LwIP, SSE, SPI, STM32, Wi-Fi
 ```shell
 Welcome
 
-[133] main(): Apr 21 2025 12:33:41  ( __GNUC__)   : 130 ms for 1600000 loops
+[133] main(): May 29 2025 10:53:36  ( __GNUC__)   : 130 ms for 1600000 loops
 
-rand() seeded by -1073904781 returned 967579691
+std::rand() seeded by 1132435944 returned 45644357
 
 ---------------------------------------------------------
-CPUID : 410FD214 , DEVID : 482 , REVID : 2001
+CPUID: 410FD214, DEVID: 482, REVID: 2001
 Cortex M33 r0p4
 ---------------------------------------------------------
 ---------------------------------------------------------
 CheckExceptionHandling(): **Checking C++ exception**
 ---------------------------------------------------------
 
-main(): sp : 0x200bff78
-main(): end: 0x2002da50
+main(): sp : 0x200bff68
+main(): end: 0x20044a60
 main(): clk:  160000000
 main(): StackType_t with: 4
 
@@ -137,22 +140,22 @@ MEM_SIZE           :  61440
 PBUF_POOL_BUFSIZE  :   1544
 
 Wi-Fi network interface initialization (SOFTAP)
-[  1542] Wi-Fi driver ready (SOFTAP):
+[  1546] Wi-Fi driver ready (SOFTAP):
           - Device Name    : EMW3080B.
           - Device ID      : MXCHIP-WIFI.
           - Device Version : V2.3.4.
 
 Wi-Fi network interface initialization (STATION)
-[  1572] Wi-Fi driver ready (STATION):
+[  1576] Wi-Fi driver ready (STATION):
           - Device Name    : EMW3080B.
           - Device ID      : MXCHIP-WIFI.
           - Device Version : V2.3.4.
 
 AppWiFiLwip::checkIoSpeed()> (130 x (1542 + 1542)) ...
-transfered: 400920 bytes, time: 307 ms, Speed: 10447 Kbps
+transfered: 400920 bytes, time: 310 ms, Speed: 10346 Kbps
 
 Start Software enabled Access Point with "MyHotSpot"
-[  2264] Wi-Fi interface ready (SOFTAP):
+[  2263] Wi-Fi interface ready (SOFTAP):
           - name        : "MA".
           - hostname    : "lwip-softap".
           - mtu         : 1500.
@@ -172,17 +175,17 @@ SSE Web server started (SOFTAP)
 
 Wi-Fi connection
 
-AppWiFiLwip::joinAccessPoint()> joining "XXXXXXX" with "ZZZZZZZZZZ" ...
-cccccccccccccccccccccccccccc
-[  6690] Wi-Fi interface ready (STATION):
+AppWiFiLwip::connectAp()> joining "XXXXXXX" with "ZZZZZZZZZZ" ...
+ccccccccccccccccccccccccccccc
+[  6802] Wi-Fi interface ready (STATION):
           - name        : "MS".
           - hostname    : "lwip-sta".
           - mtu         : 1500.
           - MAC         : 84.9D.C2.96.C8.E0
-[  6708] Setting IPv6 link-local address
-[  6711] Calling dhcp_start()
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-[ 17314] Network Interface connected (STATION):
+[  6819] Setting IPv6 link-local address
+[  6823] Calling dhcp_start()
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+[ 13426] Network Interface connected (STATION):
           - IP address      : 192.168.1.113
           - Netmask         : 255.255.255.0
           - GW address      : 192.168.1.254
@@ -196,6 +199,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 ##### Please enter one of the following command:
 
 echo        echo [-cCount] [-6] <host>
+http        http [-l<size>] [-6] <host>
 iperf       iperf [-s | -c <host>]
 ping        ping [-6] <host> (default is google.fr)
 scan        Wi-Fi scan

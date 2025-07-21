@@ -285,42 +285,46 @@ unsigned char Console::getUserInputChar(void) noexcept
 
 unsigned char Console::getUserInputCharWithFiltering(void) noexcept
 {
-  unsigned char first = this->getUserInputChar();
+  const unsigned char one_char = this->getUserInputChar();
 
-  if (Console::ESC == first) {
-    unsigned char second;
+  if (Console::ESC == one_char) {
+    HAL_Delay(1);
+    {
+      const unsigned char first = this->getUserInputChar();
+      HAL_Delay(1);
+      {
+        const unsigned char second = this->getUserInputChar();
 
-    first = this->getUserInputChar();
-    second = this->getUserInputChar();
-
-    if ((first == '[') && (second == 50)) {
-      /* discard 0x7E */
-      (void) this->getUserInputChar();
-      return Console::KEY_INSERT_MODE;
-    }
-    if ((first == 79) && (second == 83)) {
-      return '-';
-    }
-    if ((first == 79) && (second == 82)) {
-      return '*';
-    }
-    if ((first == 79) && (second == 81)) {
-      return '/';
-    }
-    if ((first == '[') && (second == 65)) {
-      return Console::KEY_UP;
-    }
-    if ((first == '[') && (second == 66)) {
-      return Console::KEY_DOWN;
-    }
-    if ((first == '[') && (second == 67)) {
-      return Console::KEY_RIGHT;
-    }
-    if ((first == '[') && (second == 68)) {
-      return Console::KEY_LEFT;
+        if ((first == '[') && (second == 50)) {
+          /* discard 0x7E */
+          (void) this->getUserInputChar();
+          return Console::KEY_INSERT_MODE;
+        }
+        if ((first == 79) && (second == 83)) {
+          return '-';
+        }
+        if ((first == 79) && (second == 82)) {
+          return '*';
+        }
+        if ((first == 79) && (second == 81)) {
+          return '/';
+        }
+        if ((first == '[') && (second == 65)) {
+          return Console::KEY_UP;
+        }
+        if ((first == '[') && (second == 66)) {
+          return Console::KEY_DOWN;
+        }
+        if ((first == '[') && (second == 67)) {
+          return Console::KEY_RIGHT;
+        }
+        if ((first == '[') && (second == 68)) {
+          return Console::KEY_LEFT;
+        }
+      }
     }
   }
-  return first;
+  return one_char;
 }
 
 void Console::getUserInputString(char s_cmd[]) noexcept
@@ -414,7 +418,6 @@ void Console::getUserInputString(char s_cmd[]) noexcept
 
       s_cmd[i] = 0;
       match_list_ptr = this->listMatchingCommands(s_cmd, match_count);
-
       if (match_count == 1) {
         cmd_ptr = match_list_ptr[0];
         std::strncpy(s_cmd, cmd_ptr->getName(), Console::MAX_INPUT_LINE - 1);

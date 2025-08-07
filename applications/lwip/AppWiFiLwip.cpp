@@ -22,6 +22,7 @@
 #include "AppConsolePing.hpp"
 #include "AppConsoleScan.hpp"
 #include "AppConsoleStats.hpp"
+#include "AppDhcpService.hpp"
 #include "EmwAddress.hpp"
 #include "EmwNetworkStack.hpp"
 #include "emw_conf.hpp"
@@ -256,7 +257,7 @@ void AppWiFiLwip::connectToAp(const char (&ssidString)[33], const char (&passwor
     vTaskDelay(100U);
   }
 
-  (void) std::printf("\n[%6" PRIu32 "] Network Interface connected (STATION):\n", HAL_GetTick());
+  (void) std::printf("\n[%6" PRIu32 "] Network interface connected (STATION):\n", HAL_GetTick());
   (void) std::printf("          - IP address      : %s\n", ipaddr_ntoa(&this->netifSTA.ip_addr));
   (void) std::printf("          - Netmask         : %s\n", ipaddr_ntoa(&this->netifSTA.netmask));
   (void) std::printf("          - GW address      : %s\n", ipaddr_ntoa(&this->netifSTA.gw));
@@ -308,11 +309,18 @@ void AppWiFiLwip::enableSoftAp(const char (&ssidString)[33], const char (&passwo
                  ip_2_ip4(&this->networkSOFTAP.staticMaskAddress),
                  ip_2_ip4(&this->networkSOFTAP.staticGatewayAddress));
 
-  (void) std::printf("\n[%6" PRIu32 "] Network Interface ready (SOFTAP):\n", HAL_GetTick());
+  (void) std::printf("\n[%6" PRIu32 "] Network interface ready (SOFTAP):\n", HAL_GetTick());
   (void) std::printf("          - IP address      : %s\n", ipaddr_ntoa(&this->netifSOFTAP.ip_addr));
   (void) std::printf("          - Netmask         : %s\n", ipaddr_ntoa(&this->netifSOFTAP.netmask));
   (void) std::printf("          - GW address      : %s\n", ipaddr_ntoa(&this->netifSOFTAP.gw));
 
+  (void) std::printf("Starting the DHCP server ...\n");
+  static AppDhcpService dhcp_server(&this->netifSOFTAP);
+  if (0 != dhcp_server.createService()) {
+    (void) std::printf("Cannot start the DHCP server\n");
+    ErrorHandler();
+    return;
+  }
   STD_PRINTF("AppWiFiLwip::enableSoftAp()<\n\n")
 }
 

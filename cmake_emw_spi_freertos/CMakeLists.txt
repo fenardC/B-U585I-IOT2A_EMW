@@ -22,7 +22,7 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/../cmake_hardware_board/arm-gcc-co
 project(${PROJECT_NAME} C CXX ASM)
 
 add_definitions(-DCOMPILATION_WITH_EMW -DCOMPILATION_WITH_FREERTOS -DCOMPILATION_WITH_SPI -DSTM32U585xx -DUSE_HAL_DRIVER -DSTM32_THREAD_SAFE_STRATEGY=4)
-add_compile_options("-Wextra" "-pedantic" "-Wmissing-declarations")
+add_compile_options("-Wextra" "-pedantic" "-Wmissing-declarations" "-Wredundant-decls")
 
 set(APPLICATION_CORE_INC_PATH "${CMAKE_SOURCE_DIR}/../core/inc")
 set(APPLICATION_CORE_SRC_PATH "${CMAKE_SOURCE_DIR}/../core/src")
@@ -64,6 +64,7 @@ add_executable(${PROJECT_NAME}
   ${APPLICATION_EMW_SRC_PATH}/AppConsolePing.cpp
   ${APPLICATION_EMW_SRC_PATH}/AppConsoleScan.cpp
   ${APPLICATION_EMW_SRC_PATH}/AppConsoleStats.cpp
+  ${APPLICATION_EMW_SRC_PATH}/AppConsoleTls.cpp
   ${APPLICATION_EMW_SRC_PATH}/AppWiFiEmw.cpp
   ${DRIVER_EMW_SRC_PATH}/EmwAddress.cpp
   ${DRIVER_EMW_SRC_PATH}/EmwApiCore.cpp

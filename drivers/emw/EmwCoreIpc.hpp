@@ -30,14 +30,17 @@
 #define __PACKED_STRUCT struct __attribute__((packed, aligned(1)))
 #endif /* __PACKED_STRUCT */
 
-class EmwApiCore;
-
 #define EMW_API_VERSION ("2.4.0")
 
-class EmwCoreIpc final {
-  private:
-    EmwCoreIpc(void) noexcept {};
-  public:
+class EmwCoreIpc {
+  protected:
+    EmwCoreIpc(void) noexcept;
+  protected:
+    EmwCoreIpc(const EmwCoreIpc &other) = delete;
+  protected:
+    ~EmwCoreIpc(void) noexcept;
+
+  protected:
     enum Status {
       eSUCCESS = (0),
       eERROR = (-1),
@@ -47,7 +50,7 @@ class EmwCoreIpc final {
 
 #define ID_NONE (static_cast<std::uint16_t>(0x0000U))
 #define CMD_BASE (static_cast<std::uint16_t>(ID_NONE))
-  public:
+  protected:
     enum ApiId : std::uint16_t {
       eSYS_CMD_BASE = static_cast<std::uint16_t>(0U),
       eSYS_ECHO_CMD,
@@ -112,26 +115,31 @@ class EmwCoreIpc final {
       eTLS_CLOSE_CMD,
       eTLS_SET_NONBLOCK_CMD
     };
-  public:
-    static void Initialize(const EmwApiCore *corePtr) noexcept;
-  public:
-    static void Poll(void *THIS, const void *argumentPtr, std::uint32_t timeoutInMs) noexcept;
-  public:
-    static Status Request(const EmwApiCore &core,
-                          std::uint8_t (&commandData)[], std::uint16_t commandDataSize,
-                          std::uint8_t (&responseBuffer)[], std::uint16_t &responseBufferSize,
-                          std::uint32_t timeoutInMs) noexcept;
-  public:
-    static void ResetIo(void) noexcept;
-  public:
-    static Status TestIpcEcho(const EmwApiCore &core,
-                              std::uint8_t (&dataIn)[], std::uint16_t dataInLength,
-                              std::uint8_t (&dataOut)[], std::uint16_t &dataOutLength,
-                              std::uint32_t timeoutInMs) noexcept;
-  public:
-    static void UnInitialize(void) noexcept;
+  protected:
+    void initialize(void) noexcept;
 
-  public:
+  protected:
+    Status request(std::uint8_t (&commandData)[], std::uint16_t commandDataSize,
+                   std::uint8_t (&responseBuffer)[], std::uint16_t &responseBufferSize,
+                   std::uint32_t timeoutInMs) noexcept;
+  protected:
+    void resetIo(void) noexcept;
+  protected:
+    Status testIpcEcho(std::uint8_t (&dataIn)[], std::uint16_t dataInLength,
+                       std::uint8_t (&dataOut)[], std::uint16_t &dataOutLength,
+                       std::uint32_t timeoutInMs) noexcept;
+  protected:
+    void unInitialize(void) noexcept;
+
+  private:
+    void poll(const void *argumentPtr, std::uint32_t timeoutInMs) noexcept;
+  protected:
+    static void Poll(void *THIS, const void *argumentPtr, std::uint32_t timeoutInMs) noexcept;
+  protected:
+    static std::uint8_t *SkipHeader(std::uint8_t buffer[]);
+
+
+  protected:
     typedef __PACKED_STRUCT CmdParams_s {
       constexpr CmdParams_s(void) noexcept
         : reqId{0U, 0U, 0U, 0U}, apiId{0U, 0U} {}
@@ -899,11 +907,8 @@ class EmwCoreIpc final {
     } TlsSetNonblockResponseParams_t;
 #endif /* EMW_NETWORK_EMW_MODE */
 
-  private:
-    typedef void (*EventCallback_t)(const EmwApiCore &core, EmwNetworkStack::Buffer_t *networkBufferPtr);
-
 #define MIPC_API_EVENT_BASE (static_cast<std::uint16_t>(0x8000U))
-  private:
+  protected:
     enum EventId : std::uint16_t {
       eSYS_EVENT_BASE = static_cast<std::uint16_t>(MIPC_API_EVENT_BASE + 0x0000U),
       eSYS_REBOOT_EVENT,
@@ -912,28 +917,14 @@ class EmwCoreIpc final {
       eWIFI_STATUS_EVENT,
       eWIFI_BYPASS_INPUT_EVENT
     };
+
   private:
-    typedef struct {
-      EventId eventId;
-      EventCallback_t callback;
-    } EventItem_t;
+    virtual void processEvent(EmwNetworkStack::Buffer_t *networkBufferPtr, std::uint16_t apiId) noexcept = 0;
   private:
-    static void ProcessEvent(const EmwApiCore & core,
-                             EmwNetworkStack::Buffer_t *networkBufferPtr) noexcept;
+    void processResponse(EmwNetworkStack::Buffer_t *networkBufferPtr, std::uint32_t reqId,
+                         std::uint8_t *payloadPtr, std::uint32_t payloadSize) noexcept;
   private:
-    static void FotaStatusEventCallback(const EmwApiCore & core,
-                                        EmwNetworkStack::Buffer_t *networkBufferPtr) noexcept;
-  private:
-    static void RebootEventCallback(const EmwApiCore & core,
-                                    EmwNetworkStack::Buffer_t *networkBufferPtr) noexcept;
-  private:
-    static void WiFiStatusEventCallback(const EmwApiCore & core,
-                                        EmwNetworkStack::Buffer_t *networkBufferPtr) noexcept;
-#if defined(EMW_NETWORK_BYPASS_MODE)
-  private:
-    static void WiFiNetlinkInputCallback(const EmwApiCore & core,
-                                         EmwNetworkStack::Buffer_t *networkBufferPtr) noexcept;
-#endif /* EMW_NETWORK_BYPASS_MODE */
+    bool isUsable;
 
   private:
     static EmwOsInterface::Mutex_t IpcLock;

@@ -25,6 +25,8 @@
 #define DEBUG_API_LOG(...)
 #endif /* EMW_API_DEBUG */
 
+#define BYTES_ARRAY_REF(data) reinterpret_cast<std::uint8_t (&)[]>(*reinterpret_cast<std::uint8_t *>(data))
+
 EmwApiEmwBypass::EmwApiEmwBypass(void) noexcept
   : EmwApiCore()
 {
@@ -38,7 +40,6 @@ EmwApiEmwBypass::~EmwApiEmwBypass(void)
   DEBUG_API_LOG("\n EmwApiEmwBypass::~EmwApiEmwBypass()<\n\n")
 }
 
-
 EmwApiBase::Status EmwApiEmwBypass::setByPass(std::int32_t enable,
     EmwApiBase::NetlinkInputCallback_t netlinkInputCallback) noexcept
 {
@@ -47,34 +48,32 @@ EmwApiBase::Status EmwApiEmwBypass::setByPass(std::int32_t enable,
   EmwCoreIpc::SysCommonResponseParams_t response_buffer;
   std::uint16_t response_buffer_size = sizeof(response_buffer);
 
-  DEBUG_API_LOG("\nEmwApiEmwBypass::setByPass()>\n");
+  DEBUG_API_LOG("\n EmwApiEmwBypass::setByPass()>\n");
 
   command_data.bypassSetParams.mode = enable;
   if ((nullptr != netlinkInputCallback) && (1 == enable)) {
-    this->runtime.netlinkInputCallback = netlinkInputCallback;
+    this->EmwApiCore::callbacks.netlinkInputCallback = netlinkInputCallback;
   }
   else {
-    this->runtime.netlinkInputCallback = nullptr;
+    this->EmwApiCore::callbacks.netlinkInputCallback = nullptr;
   }
-  if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this,
-      reinterpret_cast<std::uint8_t (&)[]>(*reinterpret_cast<std::uint8_t *>(&command_data)), sizeof(command_data),
-      reinterpret_cast<std::uint8_t (&)[]>(*reinterpret_cast<std::uint8_t *>(&response_buffer)), response_buffer_size,
-      EMW_CMD_TIMEOUT)) {
+  if (EmwCoreIpc::eSUCCESS == this->EmwCoreIpc::request(BYTES_ARRAY_REF(&command_data), sizeof(command_data),
+      BYTES_ARRAY_REF(&response_buffer), response_buffer_size, EMW_CMD_TIMEOUT)) {
     if (0 == response_buffer.status) {
       status = EmwApiBase::eEMW_STATUS_OK;
     }
   }
-  DEBUG_API_LOG("\nEmwApiEmwBypass::setByPass()< %" PRIi32 "\n\n", static_cast<std::int32_t>(status))
+  DEBUG_API_LOG("\n EmwApiEmwBypass::setByPass()< %" PRIi32 "\n\n", static_cast<std::int32_t>(status))
 
   return status;
 }
 
 EmwApiBase::Status EmwApiEmwBypass::output(std::uint8_t *dataPtr, std::uint16_t dataLength,
-    std::uint32_t interface) const noexcept
+    std::uint32_t interface) noexcept
 {
   EmwApiBase::Status status = EmwApiBase::eEMW_STATUS_ERROR;
 
-  DEBUG_API_LOG("\nEmwApiEmwBypass::output()>\n");
+  DEBUG_API_LOG("\n EmwApiEmwBypass::output()>\n");
 
   if ((nullptr == dataPtr) || (dataLength == 0) \
       || ((EmwApiBase::eWIFI_INTERFACE_STATION_IDX != interface) \
@@ -99,17 +98,15 @@ EmwApiBase::Status EmwApiEmwBypass::output(std::uint8_t *dataPtr, std::uint16_t 
       command_data_ptr->bypassOutParams.idx = interface;
       command_data_ptr->bypassOutParams.dataLength = dataLength;
 
-      if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this,
-          reinterpret_cast<std::uint8_t (&)[]>(*reinterpret_cast<std::uint8_t *>(command_data_ptr)), command_data_size,
-          reinterpret_cast<std::uint8_t (&)[]>(*reinterpret_cast<std::uint8_t *>(&response_buffer)), response_buffer_size,
-          EMW_CMD_TIMEOUT)) {
+      if (EmwCoreIpc::eSUCCESS == this->EmwCoreIpc::request(BYTES_ARRAY_REF(command_data_ptr), command_data_size,
+          BYTES_ARRAY_REF(&response_buffer), response_buffer_size, EMW_CMD_TIMEOUT)) {
         if (0 == response_buffer.status) {
           status = EmwApiBase::eEMW_STATUS_OK;
         }
       }
     }
   }
-  DEBUG_API_LOG("\nEmwApiEmwBypass::output()< %" PRIi32 "\n\n", static_cast<std::int32_t>(status))
+  DEBUG_API_LOG("\n EmwApiEmwBypass::output()< %" PRIi32 "\n\n", static_cast<std::int32_t>(status))
 
   return status;
 }

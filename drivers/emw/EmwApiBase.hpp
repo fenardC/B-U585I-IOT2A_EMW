@@ -18,6 +18,8 @@
   */
 #pragma once
 #include "EmwIoInterface.hpp"
+#include "EmwNetworkStack.hpp"
+
 #include <cstdint>
 
 #ifndef __PACKED_STRUCT
@@ -133,7 +135,7 @@ namespace EmwApiBase {
     eFOTA_FAILED
   };
   typedef void (*FotaStatusCallback_t)(EmwApiBase::FotaStatus status, std::uint32_t arg);
-  typedef void (*NetlinkInputCallback_t)(void *networkBufferPtr, std::uint32_t arg);
+  typedef void (*NetlinkInputCallback_t)(EmwNetworkStack::Buffer_t *bufferPtr, std::uint32_t arg);
 
   typedef __PACKED_STRUCT LinkInformation_s{
     constexpr LinkInformation_s(void) noexcept

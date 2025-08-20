@@ -109,8 +109,7 @@ class EmwOsInterface final {
 #if defined(EMW_WITH_NO_OS)
   public:
     static Status AddSemaphoreHook(EmwOsInterface::Semaphore_t &semaphore, EmwOsInterface::RunnerHook_t waiter,
-                                   void *THIS,
-                                   const class EmwApiCore *corePtr) noexcept;
+                                   void *THIS, const void *argumentPtr) noexcept;
 #endif /* EMW_WITH_NO_OS */
 
   public:

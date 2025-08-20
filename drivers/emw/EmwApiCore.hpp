@@ -19,10 +19,11 @@
 #pragma once
 
 #include "EmwApiBase.hpp"
+#include "EmwCoreIpc.hpp"
 #include "EmwOsInterface.hpp"
 #include <cstdint>
 
-class EmwApiCore {
+class EmwApiCore : protected /*private*/ EmwCoreIpc {
   public:
     EmwApiCore(void) noexcept;
   public:
@@ -36,22 +37,22 @@ class EmwApiCore {
       std::uint8_t bytes[6];
     } MacAddress_t;
   public:
-    EmwApiBase::Status checkNotified(std::uint32_t timeoutInMs) const noexcept;
+    EmwApiBase::Status checkNotified(std::uint32_t timeoutInMs) noexcept;
   public:
     EmwApiBase::Status connect(const char (&ssidString)[33], const char (&passwordString)[65],
-                               EmwApiBase::SecurityType securityType) const noexcept;
+                               EmwApiBase::SecurityType securityType) noexcept;
   public:
     EmwApiBase::Status connectAdvance(const char (&ssidString)[33], const char (&passwordString)[65],
                                       const EmwApiBase::ConnectAttributes_t &attributes,
-                                      const EmwApiBase::IpAttributes_t &ipAttributes) const noexcept;
+                                      const EmwApiBase::IpAttributes_t &ipAttributes) noexcept;
   public:
     EmwApiBase::Status connectEAP(const char (&ssidString)[33], const char (&identityString)[33],
                                   const char (&passwordString)[65], const EmwApiBase::EapAttributes_t &eapAttributes,
-                                  const EmwApiBase::IpAttributes_t &ipAttributes) const noexcept;
+                                  const EmwApiBase::IpAttributes_t &ipAttributes) noexcept;
   public:
-    EmwApiBase::Status connectWPS(void) const noexcept;
+    EmwApiBase::Status connectWPS(void) noexcept;
   public:
-    EmwApiBase::Status disconnect(void) const noexcept;
+    EmwApiBase::Status disconnect(void) noexcept;
   public:
     const char *getConfigurationString(void) const noexcept;
   public:
@@ -62,7 +63,7 @@ class EmwApiCore {
     EmwApiBase::Status getIP6Address(std::uint8_t (&ip6AddressBytes)[16], std::uint8_t addressSlot,
                                      EmwApiBase::EmwInterface interface) noexcept;
   public:
-    std::int32_t getIP6AddressState(std::uint8_t addressSlot, EmwApiBase::EmwInterface interface) const noexcept;
+    std::int32_t getIP6AddressState(std::uint8_t addressSlot, EmwApiBase::EmwInterface interface) noexcept;
   public:
     EmwApiBase::Status getStationMacAddress(EmwApiCore::MacAddress_t &mac) const noexcept;
   public:
@@ -70,7 +71,7 @@ class EmwApiCore {
   public:
     std::int8_t getScanResults(std::uint8_t (&results)[480], std::uint8_t number) const noexcept;
   public:
-    EmwApiBase::Status getVersion(char (&version)[25], std::uint32_t versionSize) const noexcept;
+    EmwApiBase::Status getVersion(char (&version)[25], std::uint32_t versionSize) noexcept;
   public:
     std::uint8_t numberOfInterfacesRunning(void) noexcept
     {
@@ -84,27 +85,27 @@ class EmwApiCore {
     EmwApiBase::Status registerStatusCallback(const EmwApiBase::WiFiStatusCallback_t statusCallbackFunctionPtr,
         void *argPtr, EmwApiBase::EmwInterface interface) noexcept;
   public:
-    EmwApiBase::Status resetHardware(void) const noexcept;
+    EmwApiBase::Status resetHardware(void) noexcept;
   public:
-    EmwApiBase::Status resetModule(void) const noexcept;
+    EmwApiBase::Status resetModule(void) noexcept;
   public:
-    EmwApiBase::Status resetToFactoryDefault(void) const noexcept;
+    EmwApiBase::Status resetToFactoryDefault(void) noexcept;
   public:
     EmwApiBase::Status scan(EmwApiBase::ScanMode scanMode,
                             const char (&ssidString)[33], std::int32_t ssidStringLength) noexcept;
   public:
     EmwApiBase::Status setTimeout(std::uint32_t timeoutInMs) noexcept;
   public:
-    EmwApiBase::Status startSoftAp(const EmwApiBase::SoftApSettings_t &accessPointSettings) const noexcept;
+    EmwApiBase::Status startSoftAp(const EmwApiBase::SoftApSettings_t &accessPointSettings) noexcept;
   public:
-    EmwApiBase::Status stopSoftAp(void) const noexcept;
+    EmwApiBase::Status stopSoftAp(void) noexcept;
   public:
-    EmwApiBase::Status stopWPS(void) const noexcept;
+    EmwApiBase::Status stopWPS(void) noexcept;
   public:
     int32_t stationPowerSave(std::int32_t onOff) noexcept;
   public:
     EmwApiBase::Status testIpcEcho(std::uint8_t (&dataIn)[], std::uint16_t dataInLength,
-                                   std::uint8_t (&dataOut)[], std::uint16_t &dataOutLength, std::uint32_t timeoutInMs) const noexcept;
+                                   std::uint8_t (&dataOut)[], std::uint16_t &dataOutLength, std::uint32_t timeoutInMs) noexcept;
   public:
     void unInitialize(void) noexcept;
   public:
@@ -146,25 +147,51 @@ class EmwApiCore {
     } stationSettings;
 
   private:
-    EmwApiBase::SoftApSettings_t softAccessPointSettings;
-
-  public:
     struct Runtime_s {
       constexpr Runtime_s(void) noexcept
-        : timeoutInMs{10000U}, wiFiStatusCallbacks{nullptr, nullptr}, wiFiStatusCallbackArgPtrs{nullptr, nullptr}
-      , fotaStatusCallback(nullptr), fotaStatusCallbackArg(0U)
-      , netlinkInputCallback(nullptr), scanResults(), interfaces(0U) {}
+        : timeoutInMs{10000U}, interfaces(0U) {}
       std::uint32_t timeoutInMs;
+      volatile std::uint8_t interfaces;
+    } runtime;
+
+  private:
+    EmwApiBase::SoftApSettings_t softAccessPointSettings;
+  private:
+    EmwApiBase::ScanResults_t lastScanResults;
+
+  private:
+    typedef void (*EventCallback_t)(const EmwApiCore *corePtr, EmwNetworkStack::Buffer_t *networkBufferPtr);
+
+  private:
+    typedef struct {
+      std::uint16_t eventId;
+      EventCallback_t callback;
+    } EventItem_t;
+
+  protected:
+    struct ApiCallbacks_s {
+      constexpr ApiCallbacks_s(void) noexcept
+        : wiFiStatusCallbacks{nullptr, nullptr}, wiFiStatusCallbackArgPtrs{nullptr, nullptr}
+      , fotaStatusCallback(nullptr), fotaStatusCallbackArg(0U), netlinkInputCallback(nullptr) {}
       EmwApiBase::WiFiStatusCallback_t wiFiStatusCallbacks[EmwApiBase::eWIFI_INTERFACE_COUNT_MAX];
       void *wiFiStatusCallbackArgPtrs[EmwApiBase::eWIFI_INTERFACE_COUNT_MAX];
       EmwApiBase::FotaStatusCallback_t fotaStatusCallback;
       std::uint32_t fotaStatusCallbackArg;
       EmwApiBase::NetlinkInputCallback_t netlinkInputCallback;
-      EmwApiBase::ScanResults_t scanResults;
-      volatile std::uint8_t interfaces;
-    } runtime;
+    } callbacks;
 
-  public:
+  private:
+    void processEvent(EmwNetworkStack::Buffer_t *networkBufferPtr, std::uint16_t apiId) noexcept override;
+  private:
+    static void ProcessFotaStatusEvent(const EmwApiCore *THIS, EmwNetworkStack::Buffer_t *networkBufferPtr) noexcept;
+  private:
+    static void ProcessRebootEvent(const EmwApiCore *THIS, EmwNetworkStack::Buffer_t *networkBufferPtr) noexcept;
+  private:
+    static void ProcessWiFiStatusEvent(const EmwApiCore *THIS, EmwNetworkStack::Buffer_t *networkBufferPtr) noexcept;
+#if defined(EMW_NETWORK_BYPASS_MODE)
+  private:
+    static void ProcessWiFiNetlinkInput(const EmwApiCore *THIS, EmwNetworkStack::Buffer_t *networkBufferPtr) noexcept;
+#endif /* EMW_NETWORK_BYPASS_MODE */
 
 #if defined(EMW_WITH_RTOS)
   private:
@@ -177,9 +204,11 @@ class EmwApiCore {
 
   private:
     EmwApiBase::Status setEapCert(std::uint8_t certificateType,
-                                  const char *certificateStringPtr, std::uint32_t length) const noexcept;
+                                  const char *certificateStringPtr, std::uint32_t length) noexcept;
   private:
     std::uint8_t toIpcInterface(EmwApiBase::EmwInterface interface) const noexcept;
+
+
   private:
     static const std::uint32_t GET_IP_ADDRESS_TIMEOUT = 12000U;
   private:

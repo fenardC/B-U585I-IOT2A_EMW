@@ -125,11 +125,11 @@ void EmwOsInterface::DeleteSemaphore(EmwOsInterface::Semaphore_t &semaphore) noe
 }
 
 EmwOsInterface::Status EmwOsInterface::AddSemaphoreHook(EmwOsInterface::Semaphore_t &semaphore,
-    EmwOsInterface::RunnerHook_t waiter, void *THIS, const class EmwApiCore *corePtr) noexcept
+    EmwOsInterface::RunnerHook_t waiter, void *THIS, const void *argumentPtr) noexcept
 {
   semaphore.waiterRunner = waiter;
   semaphore.waiterRunnerThis = THIS;
-  semaphore.waiterRunnerArgumentPtr = corePtr;
+  semaphore.waiterRunnerArgumentPtr = argumentPtr;
 
   EMW_OS_DEBUG_LOG("\n EmwOsInterface::AddSemaphoreHook()< \"%s\"\n", semaphore.namePtr)
   return EmwOsInterface::eOK;

@@ -54,6 +54,7 @@ add_executable(${PROJECT_NAME}
   ${APPLICATION_CORE_SRC_PATH}/system_stm32u5xx.c
   ${APPLICATION_CORE_SRC_PATH}/tim.c
   ${APPLICATION_CORE_SRC_PATH}/usart.c
+  ${APPLICATION_EMW_SRC_PATH}/AppConsoleDownload.cpp
   ${APPLICATION_EMW_SRC_PATH}/AppConsoleEcho.cpp
   ${APPLICATION_EMW_SRC_PATH}/AppConsolePing.cpp
   ${APPLICATION_EMW_SRC_PATH}/AppConsoleScan.cpp

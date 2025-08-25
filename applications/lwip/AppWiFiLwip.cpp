@@ -22,6 +22,7 @@
 #include "AppConsolePing.hpp"
 #include "AppConsoleScan.hpp"
 #include "AppConsoleStats.hpp"
+#include "AppConsoleDownload.hpp"
 #include "AppDhcpService.hpp"
 #include "AppHttpSSE.hpp"
 #include "EmwAddress.hpp"
@@ -135,13 +136,15 @@ extern "C" {
         (void) std::printf("\n Wi-Fi connection\n");
         the_application.connectToAp(ssid, psk);
       }
+
       {
         class AppConsoleEcho echo;
+        class AppConsoleDownload http;
         class AppConsoleIperf iperf(the_application.netifSTA);
         class AppConsolePing ping(the_application.netifSTA);
         class AppConsoleScan scan;
         class AppConsoleStats stats;
-        class Cmd *cmds[] = {&echo, &iperf, &ping, &scan, &stats, nullptr};
+        class Cmd *cmds[] = {&echo, &http, &iperf, &ping, &scan, &stats, nullptr};
 
         class Console the_console("app>", cmds);
 

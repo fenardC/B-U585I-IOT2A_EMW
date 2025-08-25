@@ -15,7 +15,8 @@ This project aims at demonstrating some Wi-Fi examples and driver written with C
 _Cyril FENARD._
 
 # Key words
-CRTP, DMA, EMW, FreeRTOS, LwIP, RAII, SPI, STM32, TCP, UDP, Wi-Fi
+
+CRTP, DMA, EMW, FreeRTOS, LwIP, RAII, SSE, SPI, STM32, TCP, UDP, Wi-Fi
 
 ## Topics
 
@@ -46,6 +47,9 @@ CRTP, DMA, EMW, FreeRTOS, LwIP, RAII, SPI, STM32, TCP, UDP, Wi-Fi
 
     $ /cygdrive/c/Program\ Files/Cppcheck/cppcheck --version
     Cppcheck 2.16.0
+
+    $ iperf -v
+    iperf version 2.0.13 (21 Jan 2019) pthreads
 ```
 
 ## Tools with Linux
@@ -198,6 +202,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 ##### Please enter one of the following command:
 
 echo        echo [-cCount] [-6] <ip>
+http        http [-l<size>] [-6] <req> (default is http://test-debit.free.fr/image.iso)
 iperf       iperf [-s | -c <ip>]
 ping        ping [-6] <hostname> (default is google.fr)
 scan        Wi-Fi scan

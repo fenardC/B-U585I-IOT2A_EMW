@@ -10,6 +10,7 @@ This project aims at demonstrating some Wi-Fi examples and driver written with C
 
 > [!IMPORTANT]
 > In case a local echo server is running, the firewall TCP port used in this case MUST be allowed on the hosting machine.
+> The same is also to be done for iperf tests.
 
 _Cyril FENARD._
 
@@ -45,7 +46,11 @@ CRTP, DMA, EMW, FreeRTOS, LwIP, RAII, SPI, STM32, TCP, UDP, Wi-Fi
 
     $ /cygdrive/c/Program\ Files/Cppcheck/cppcheck --version
     Cppcheck 2.16.0
+```
 
+## Tools with Linux
+
+```shell
     $ uname -srvimo
     Linux 6.15.10-100.fc41.x86_64 #1 SMP PREEMPT_DYNAMIC Fri Aug 15 14:55:12 UTC 2025 x86_64 unknown GNU/Linux
 
@@ -159,10 +164,13 @@ Start Software enabled Access Point with "MyHotSpot"
           - IP address      : 10.10.10.1
           - Netmask         : 255.255.255.0
           - GW address      : 10.10.10.1
+Starting the DHCP server ...
 
 Wi-Fi scan
 ######### Scan 10 BSS ##########
 ######### End of Scan ##########
+
+SSE Web server started (SOFTAP)
 
 Wi-Fi connection
 
@@ -190,7 +198,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 ##### Please enter one of the following command:
 
 echo        echo [-cCount] [-6] <ip>
-iperf       iperf [-s | -c <host>]
+iperf       iperf [-s | -c <ip>]
 ping        ping [-6] <hostname> (default is google.fr)
 scan        Wi-Fi scan
 stats       Get LwIP statistics

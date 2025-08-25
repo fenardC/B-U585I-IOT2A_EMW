@@ -214,7 +214,7 @@ extern "C" {
   * MEMP_NUM_NETCONN: the number of struct netconns.
   * (only needed if you use the sequential API, like api_lib.c)
   */
-#define MEMP_NUM_NETCONN                12
+#define MEMP_NUM_NETCONN                24
 
 /**
   * MEMP_NUM_TCPIP_MSG_INPKT: the number of struct tcpip_msg, which are used
@@ -525,7 +525,7 @@ extern "C" {
 /**
   * TCPIP_THREAD_NAME: The name assigned to the main tcpip thread.
   */
-#define TCPIP_THREAD_NAME               "TCP/IP"
+#define TCPIP_THREAD_NAME               "LWIP-TCP/IP"
 
 /**
   * TCPIP_THREAD_STACKSIZE: The stack size used by the main tcpip thread.
@@ -578,7 +578,7 @@ extern "C" {
   * NETCONN_UDP. The queue size value itself is platform-dependent, but is passed
   * to sys_mbox_new() when the recvmbox is created.
   */
-#define DEFAULT_UDP_RECVMBOX_SIZE       10
+#define DEFAULT_UDP_RECVMBOX_SIZE       16
 
 /**
   * DEFAULT_TCP_RECVMBOX_SIZE: The mailbox size for the incoming packets on a

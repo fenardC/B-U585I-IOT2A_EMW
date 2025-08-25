@@ -23,6 +23,7 @@
 #include "AppConsoleScan.hpp"
 #include "AppConsoleStats.hpp"
 #include "AppDhcpService.hpp"
+#include "AppHttpSSE.hpp"
 #include "EmwAddress.hpp"
 #include "EmwNetworkStack.hpp"
 #include "emw_conf.hpp"
@@ -123,6 +124,10 @@ extern "C" {
     }
 
     {
+      class AppHttpSSE sse(the_application.netifSOFTAP);
+      sse.initializeServer(the_application.netifSOFTAP.ip_addr.u_addr.ip4.addr, 80);
+      (void) std::printf("\nSSE Web server started (SOFTAP)\n");
+
       {
         static const char ssid[33] = {WIFI_SSID};
         static const char psk[65] = {WIFI_PASSWORD};

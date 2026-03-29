@@ -69,14 +69,14 @@ typedef struct __DCACHE_HandleTypeDef {
   DCACHE_TypeDef *Instance; /*!< DCACHE register base address.    */
   DCACHE_InitTypeDef Init; /*!< DCACHE Initialization Structure. */
 
-  void (* ErrorCallback)(struct __DCACHE_HandleTypeDef *hdcache);
-  void (* CleanByAddrCallback)(struct __DCACHE_HandleTypeDef *hdcache);
-  void (* InvalidateByAddrCallback)(struct __DCACHE_HandleTypeDef *hdcache);
-  void (* InvalidateCompleteCallback)(struct __DCACHE_HandleTypeDef *hdcache);
-  void (* CleanAndInvalidateByAddrCallback)(struct __DCACHE_HandleTypeDef *hdcache);
+  void (* ErrorCallback)(const struct __DCACHE_HandleTypeDef *hdcache);
+  void (* CleanByAddrCallback)(const struct __DCACHE_HandleTypeDef *hdcache);
+  void (* InvalidateByAddrCallback)(const struct __DCACHE_HandleTypeDef *hdcache);
+  void (* InvalidateCompleteCallback)(const struct __DCACHE_HandleTypeDef *hdcache);
+  void (* CleanAndInvalidateByAddrCallback)(const struct __DCACHE_HandleTypeDef *hdcache);
 
-  void (* MspInitCallback)(struct __DCACHE_HandleTypeDef *hdcache);
-  void (* MspDeInitCallback)(struct __DCACHE_HandleTypeDef *hdcache);
+  void (* MspInitCallback)(const struct __DCACHE_HandleTypeDef *hdcache);
+  void (* MspDeInitCallback)(const struct __DCACHE_HandleTypeDef *hdcache);
 
   __IO HAL_DCACHE_StateTypeDef State;
   __IO uint32_t ErrorCode;
@@ -86,7 +86,7 @@ typedef struct __DCACHE_HandleTypeDef {
   * @brief  HAL DCACHE Callback pointer definition
   */
 /*!< Pointer to a DCACHE common callback function */
-typedef void (*pDCACHE_CallbackTypeDef)(DCACHE_HandleTypeDef *hdcache);
+typedef void (*pDCACHE_CallbackTypeDef)(const DCACHE_HandleTypeDef *hdcache);
 
 /**
   * @brief  HAL DCACHE Callback ID enumeration definition
@@ -255,8 +255,8 @@ typedef enum {
   */
 HAL_StatusTypeDef HAL_DCACHE_Init(DCACHE_HandleTypeDef *hdcache);
 HAL_StatusTypeDef HAL_DCACHE_DeInit(DCACHE_HandleTypeDef *hdcache);
-void HAL_DCACHE_MspInit(DCACHE_HandleTypeDef *hdcache);
-void HAL_DCACHE_MspDeInit(DCACHE_HandleTypeDef *hdcache);
+void HAL_DCACHE_MspInit(const DCACHE_HandleTypeDef *hdcache);
+void HAL_DCACHE_MspDeInit(const DCACHE_HandleTypeDef *hdcache);
 /**
   * @}
   */
@@ -290,11 +290,11 @@ HAL_StatusTypeDef HAL_DCACHE_CleanInvalidByAddr_IT(DCACHE_HandleTypeDef *hdcache
 
 /*** IRQHandler and Callbacks ***/
 void HAL_DCACHE_IRQHandler(DCACHE_HandleTypeDef *hdcache);
-void HAL_DCACHE_ErrorCallback(DCACHE_HandleTypeDef *hdcache);
-void HAL_DCACHE_CleanByAddrCallback(DCACHE_HandleTypeDef *hdcache);
-void HAL_DCACHE_InvalidateByAddrCallback(DCACHE_HandleTypeDef *hdcache);
-void HAL_DCACHE_InvalidateCompleteCallback(DCACHE_HandleTypeDef *hdcache);
-void HAL_DCACHE_CleanAndInvalidateByAddrCallback(DCACHE_HandleTypeDef *hdcache);
+void HAL_DCACHE_ErrorCallback(const DCACHE_HandleTypeDef *hdcache);
+void HAL_DCACHE_CleanByAddrCallback(const DCACHE_HandleTypeDef *hdcache);
+void HAL_DCACHE_InvalidateByAddrCallback(const DCACHE_HandleTypeDef *hdcache);
+void HAL_DCACHE_InvalidateCompleteCallback(const DCACHE_HandleTypeDef *hdcache);
+void HAL_DCACHE_CleanAndInvalidateByAddrCallback(const DCACHE_HandleTypeDef *hdcache);
 
 /* Callbacks Register/UnRegister functions ***/
 HAL_StatusTypeDef HAL_DCACHE_RegisterCallback(DCACHE_HandleTypeDef *hdcache, HAL_DCACHE_CallbackIDTypeDef CallbackID,

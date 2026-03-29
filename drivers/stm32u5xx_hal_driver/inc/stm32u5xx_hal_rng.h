@@ -294,8 +294,8 @@ typedef void (*pRNG_ReadyDataCallbackTypeDef)(RNG_HandleTypeDef *hrng,
   */
 HAL_StatusTypeDef HAL_RNG_Init(RNG_HandleTypeDef *hrng);
 HAL_StatusTypeDef HAL_RNG_DeInit(RNG_HandleTypeDef *hrng);
-void HAL_RNG_MspInit(RNG_HandleTypeDef *hrng);
-void HAL_RNG_MspDeInit(RNG_HandleTypeDef *hrng);
+void HAL_RNG_MspInit(const RNG_HandleTypeDef *hrng);
+void HAL_RNG_MspDeInit(const RNG_HandleTypeDef *hrng);
 
 /* Callbacks Register/UnRegister functions  ***********************************/
 #if (USE_HAL_RNG_REGISTER_CALLBACKS == 1)

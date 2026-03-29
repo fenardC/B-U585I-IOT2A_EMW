@@ -380,7 +380,7 @@ HAL_StatusTypeDef HAL_TIM_Base_DeInit(TIM_HandleTypeDef *htim)
   * @param  htim TIM Base handle
   * @retval None
   */
-__weak void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim)
+__weak void HAL_TIM_Base_MspInit(const TIM_HandleTypeDef *htim)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(htim);
@@ -395,7 +395,7 @@ __weak void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim)
   * @param  htim TIM Base handle
   * @retval None
   */
-__weak void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef *htim)
+__weak void HAL_TIM_Base_MspDeInit(const TIM_HandleTypeDef *htim)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(htim);
@@ -5746,7 +5746,7 @@ HAL_StatusTypeDef TIM_DMA_Start_IT(DMA_HandleTypeDef *hdma, uint32_t src, uint32
   * @param  htim TIM handle
   * @retval None
   */
-__weak void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+__weak void HAL_TIM_PeriodElapsedCallback(const TIM_HandleTypeDef *htim)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(htim);

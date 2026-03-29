@@ -274,7 +274,7 @@ HAL_StatusTypeDef HAL_DCACHE_DeInit(DCACHE_HandleTypeDef *hdcache)
   *                 the configuration information for the specified DCACHEx peripheral.
   * @retval None
   */
-__weak void HAL_DCACHE_MspInit(DCACHE_HandleTypeDef *hdcache)
+__weak void HAL_DCACHE_MspInit(const DCACHE_HandleTypeDef *hdcache)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hdcache);
@@ -290,7 +290,7 @@ __weak void HAL_DCACHE_MspInit(DCACHE_HandleTypeDef *hdcache)
   *                 the configuration information for the specified DCACHEx peripheral.
   * @retval None
   */
-__weak void HAL_DCACHE_MspDeInit(DCACHE_HandleTypeDef *hdcache)
+__weak void HAL_DCACHE_MspDeInit(const DCACHE_HandleTypeDef *hdcache)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hdcache);
@@ -1201,7 +1201,7 @@ HAL_StatusTypeDef HAL_DCACHE_UnRegisterCallback(DCACHE_HandleTypeDef *hdcache, H
   *                 the configuration information for the specified DCACHEx peripheral.
   * @retval None
   */
-__weak void HAL_DCACHE_CleanByAddrCallback(DCACHE_HandleTypeDef *hdcache)
+__weak void HAL_DCACHE_CleanByAddrCallback(const DCACHE_HandleTypeDef *hdcache)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hdcache);
@@ -1217,7 +1217,7 @@ __weak void HAL_DCACHE_CleanByAddrCallback(DCACHE_HandleTypeDef *hdcache)
   *                 the configuration information for the specified DCACHEx peripheral.
   * @retval None
   */
-__weak void HAL_DCACHE_InvalidateByAddrCallback(DCACHE_HandleTypeDef *hdcache)
+__weak void HAL_DCACHE_InvalidateByAddrCallback(const DCACHE_HandleTypeDef *hdcache)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hdcache);
@@ -1233,7 +1233,7 @@ __weak void HAL_DCACHE_InvalidateByAddrCallback(DCACHE_HandleTypeDef *hdcache)
   *                 the configuration information for the specified DCACHEx peripheral.
   * @retval None
   */
-__weak void HAL_DCACHE_CleanAndInvalidateByAddrCallback(DCACHE_HandleTypeDef *hdcache)
+__weak void HAL_DCACHE_CleanAndInvalidateByAddrCallback(const DCACHE_HandleTypeDef *hdcache)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hdcache);
@@ -1249,7 +1249,7 @@ __weak void HAL_DCACHE_CleanAndInvalidateByAddrCallback(DCACHE_HandleTypeDef *hd
   *                 the configuration information for the specified DCACHEx peripheral.
   * @retval None
   */
-__weak void HAL_DCACHE_InvalidateCompleteCallback(DCACHE_HandleTypeDef *hdcache)
+__weak void HAL_DCACHE_InvalidateCompleteCallback(const DCACHE_HandleTypeDef *hdcache)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hdcache);
@@ -1265,7 +1265,7 @@ __weak void HAL_DCACHE_InvalidateCompleteCallback(DCACHE_HandleTypeDef *hdcache)
   *                 the configuration information for the specified DCACHEx peripheral.
   * @retval None
   */
-__weak void HAL_DCACHE_ErrorCallback(DCACHE_HandleTypeDef *hdcache)
+__weak void HAL_DCACHE_ErrorCallback(const DCACHE_HandleTypeDef *hdcache)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hdcache);

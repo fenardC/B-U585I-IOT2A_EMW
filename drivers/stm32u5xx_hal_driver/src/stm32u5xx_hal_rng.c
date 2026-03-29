@@ -330,7 +330,7 @@ HAL_StatusTypeDef HAL_RNG_DeInit(RNG_HandleTypeDef *hrng)
   *                the configuration information for RNG.
   * @retval None
   */
-__weak void HAL_RNG_MspInit(RNG_HandleTypeDef *hrng)
+__weak void HAL_RNG_MspInit(const RNG_HandleTypeDef *hrng)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hrng);
@@ -345,7 +345,7 @@ __weak void HAL_RNG_MspInit(RNG_HandleTypeDef *hrng)
   *                the configuration information for RNG.
   * @retval None
   */
-__weak void HAL_RNG_MspDeInit(RNG_HandleTypeDef *hrng)
+__weak void HAL_RNG_MspDeInit(const RNG_HandleTypeDef *hrng)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hrng);

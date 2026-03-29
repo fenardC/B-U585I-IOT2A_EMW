@@ -2276,8 +2276,8 @@ mode.
 /* Time Base functions ********************************************************/
 HAL_StatusTypeDef HAL_TIM_Base_Init(TIM_HandleTypeDef *htim);
 HAL_StatusTypeDef HAL_TIM_Base_DeInit(TIM_HandleTypeDef *htim);
-void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim);
-void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef *htim);
+void HAL_TIM_Base_MspInit(const TIM_HandleTypeDef *htim);
+void HAL_TIM_Base_MspDeInit(const TIM_HandleTypeDef *htim);
 /* Blocking mode: Polling */
 HAL_StatusTypeDef HAL_TIM_Base_Start(TIM_HandleTypeDef *htim);
 HAL_StatusTypeDef HAL_TIM_Base_Stop(TIM_HandleTypeDef *htim);
@@ -2455,7 +2455,7 @@ uint32_t HAL_TIM_ReadCapturedValue(const TIM_HandleTypeDef *htim, uint32_t Chann
   * @{
   */
 /* Callback in non blocking modes (Interrupt and DMA) *************************/
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
+void HAL_TIM_PeriodElapsedCallback(const TIM_HandleTypeDef *htim);
 void HAL_TIM_PeriodElapsedHalfCpltCallback(TIM_HandleTypeDef *htim);
 void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim);
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim);

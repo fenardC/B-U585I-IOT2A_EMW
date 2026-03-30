@@ -27,7 +27,11 @@
 *.lib
 
 # Executables
+*.bin
+*.elf
 *.exe
+*.launch
+*.map
 *.out
 *.app
 
@@ -42,7 +46,8 @@
 *.cyclo
 *.mk
 *.su
-STM32CubeIDE
+build/
+STM32CubeIDE/
 Debug/
 doc/
 doxygen/

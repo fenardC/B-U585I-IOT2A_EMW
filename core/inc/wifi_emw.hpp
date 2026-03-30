@@ -16,17 +16,24 @@
   * along with this program. If not, see <http://www.gnu.org/licenses/>.
   ******************************************************************************
   */
-#include "stdio_uart.h"
-#include "usart.h"
-/* #include "stm32u5xx_hal_uart.h" */
+#pragma once
 
-int InitializeStdoutWithUart(void)
-{
-  return 0;
-}
+#include "EmwApiCore.hpp"
+#if defined(COMPILATION_WITH_EMW)
+#include "EmwApiEmw.hpp"
+#elif defined(COMPILATION_WITH_LWIP)
+#include "EmwApiEmwBypass.hpp"
+#endif /* COMPILATION_WITH_EMW) */
 
-int io_putchar(char ch)
-{
-  HAL_UART_Transmit(&hUart1, (uint8_t *)&ch, 1, 0xFFFF);
-  return ch;
-}
+
+#define WIFI_SSID "YOUR_SSID"
+#define WIFI_PASSWORD "YOUR_PASSWORD"
+
+void InitializeEmw(EmwApiCore &emw) noexcept;
+std::int32_t Scan(EmwApiCore &emw) noexcept;
+
+#if defined(COMPILATION_WITH_EMW)
+extern class EmwApiEmw Emw;
+#elif defined(COMPILATION_WITH_LWIP)
+extern class EmwApiEmwBypass EmwBypass;
+#endif /* COMPILATION_WITH_EMW) */

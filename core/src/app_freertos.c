@@ -16,17 +16,43 @@
   * along with this program. If not, see <http://www.gnu.org/licenses/>.
   ******************************************************************************
   */
-#include "stdio_uart.h"
-#include "usart.h"
-/* #include "stm32u5xx_hal_uart.h" */
+#include "tim.h"
+#include "app_freertos.h"
+#include "FreeRTOS.h"
+#include "portable.h"
+#include "task.h"
+#include <inttypes.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
 
-int InitializeStdoutWithUart(void)
+void vApplicationMallocFailedHook(void)
 {
-  return 0;
+  printf("Run out of memory\n");
+  while (true) {}
 }
 
-int io_putchar(char ch)
+void vApplicationStackOverflowHook(xTaskHandle task, char *taskNamePtr)
 {
-  HAL_UART_Transmit(&hUart1, (uint8_t *)&ch, 1, 0xFFFF);
-  return ch;
+  (void) task;
+  printf("Stack overflow: %s", taskNamePtr);
+  while (true) {}
+}
+
+#if configENABLE_HEAP_PROTECTOR
+void vApplicationGetRandomHeapCanary(portPOINTER_SIZE_TYPE *pxHeapCanary);
+void vApplicationGetRandomHeapCanary(portPOINTER_SIZE_TYPE *pxHeapCanary)
+{
+  *pxHeapCanary = 0xdead3472;
+}
+#endif /* configENABLE_HEAP_PROTECTOR */
+
+void configureTimerForRunTimeStats(void)
+{
+  HAL_TIM_Base_Start_IT(&hTim2);
+}
+
+unsigned long getRunTimeCounterValue(void)
+{
+  return ulHighFrequencyTimerTicks;
 }

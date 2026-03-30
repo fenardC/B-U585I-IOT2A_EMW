@@ -16,17 +16,41 @@
   * along with this program. If not, see <http://www.gnu.org/licenses/>.
   ******************************************************************************
   */
-#include "stdio_uart.h"
-#include "usart.h"
-/* #include "stm32u5xx_hal_uart.h" */
+#include "rng.h"
+#include "stm32u5xx_hal_rcc.h"
+#include "main.hpp"
 
-int InitializeStdoutWithUart(void)
+RNG_HandleTypeDef hRng;
+
+void InitializeRNG(void)
 {
-  return 0;
+  hRng.Instance = RNG;
+  hRng.Init.ClockErrorDetection = RNG_CED_ENABLE;
+
+  if (HAL_RNG_Init(&hRng) != HAL_OK) {
+    ErrorHandler();
+  }
 }
 
-int io_putchar(char ch)
+void HAL_RNG_MspInit(const RNG_HandleTypeDef *rngPtr)
 {
-  HAL_UART_Transmit(&hUart1, (uint8_t *)&ch, 1, 0xFFFF);
-  return ch;
+  if (rngPtr->Instance == RNG) {
+    RCC_PeriphCLKInitTypeDef configuration = {0};
+
+    configuration.PeriphClockSelection = RCC_PERIPHCLK_RNG;
+    configuration.RngClockSelection = RCC_RNGCLKSOURCE_HSI48;
+
+    if (HAL_RCCEx_PeriphCLKConfig(&configuration) != HAL_OK) {
+      ErrorHandler();
+    }
+
+    __HAL_RCC_RNG_CLK_ENABLE();
+  }
+}
+
+void HAL_RNG_MspDeInit(const RNG_HandleTypeDef *rngPtr)
+{
+  if (rngPtr->Instance == RNG) {
+    __HAL_RCC_RNG_CLK_DISABLE();
+  }
 }

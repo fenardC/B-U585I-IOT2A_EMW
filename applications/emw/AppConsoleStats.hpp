@@ -16,17 +16,30 @@
   * along with this program. If not, see <http://www.gnu.org/licenses/>.
   ******************************************************************************
   */
-#include "stdio_uart.h"
-#include "usart.h"
-/* #include "stm32u5xx_hal_uart.h" */
+#pragma once
 
-int InitializeStdoutWithUart(void)
-{
-  return 0;
-}
+#include "Console.hpp"
 
-int io_putchar(char ch)
-{
-  HAL_UART_Transmit(&hUart1, (uint8_t *)&ch, 1, 0xFFFF);
-  return ch;
-}
+class EmwApiEmw;
+
+class AppConsoleStats final : public Cmd {
+  public:
+    explicit AppConsoleStats(EmwApiEmw& wifiEmw) noexcept;
+  public:
+    virtual ~AppConsoleStats(void) noexcept override;
+  public:
+    std::int32_t execute(std::int32_t argc, const char *argvPtrs[]) noexcept override;
+  public:
+    const char *getComment(void) const noexcept override
+    {
+      return " Get EMW statistics";
+    }
+  public:
+    const char *getName(void) const noexcept override
+    {
+      return "stats";
+    }
+
+  private:
+    EmwApiEmw &emw;
+};

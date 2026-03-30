@@ -16,17 +16,18 @@
   * along with this program. If not, see <http://www.gnu.org/licenses/>.
   ******************************************************************************
   */
-#include "stdio_uart.h"
-#include "usart.h"
-/* #include "stm32u5xx_hal_uart.h" */
+#include "icache.h"
+#include "stm32u5xx_hal.h"
+/* #include "stm32u5xx_hal_icache.h" */
+#include "main.hpp"
 
-int InitializeStdoutWithUart(void)
+void InitializeICACHE(void)
 {
-  return 0;
-}
+  if (HAL_ICACHE_ConfigAssociativityMode(ICACHE_1WAY) != HAL_OK) {
+    ErrorHandler();
+  }
 
-int io_putchar(char ch)
-{
-  HAL_UART_Transmit(&hUart1, (uint8_t *)&ch, 1, 0xFFFF);
-  return ch;
+  if (HAL_ICACHE_Enable() != HAL_OK) {
+    ErrorHandler();
+  }
 }

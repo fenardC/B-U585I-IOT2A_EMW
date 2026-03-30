@@ -16,17 +16,12 @@
   * along with this program. If not, see <http://www.gnu.org/licenses/>.
   ******************************************************************************
   */
-#include "stdio_uart.h"
-#include "usart.h"
-/* #include "stm32u5xx_hal_uart.h" */
+#include "stm32u5xx_hal.h"
+#include "stm32u5xx_hal_cortex.h"
+#include "stm32u585xx.h"
 
-int InitializeStdoutWithUart(void)
+void HAL_MspInit(void)
 {
-  return 0;
-}
-
-int io_putchar(char ch)
-{
-  HAL_UART_Transmit(&hUart1, (uint8_t *)&ch, 1, 0xFFFF);
-  return ch;
+  __HAL_RCC_PWR_CLK_ENABLE();
+  HAL_NVIC_SetPriority(PendSV_IRQn, 15, 0);
 }

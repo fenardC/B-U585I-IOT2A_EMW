@@ -16,17 +16,19 @@
   * along with this program. If not, see <http://www.gnu.org/licenses/>.
   ******************************************************************************
   */
-#include "stdio_uart.h"
-#include "usart.h"
-/* #include "stm32u5xx_hal_uart.h" */
+#ifndef RNG_H
+#define RNG_H
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+#include "stm32u5xx_hal.h"
+//#include "stm32u5xx_hal_rng.h"
 
-int InitializeStdoutWithUart(void)
-{
-  return 0;
-}
+extern RNG_HandleTypeDef hRng;
 
-int io_putchar(char ch)
-{
-  HAL_UART_Transmit(&hUart1, (uint8_t *)&ch, 1, 0xFFFF);
-  return ch;
+void InitializeRNG(void);
+
+#ifdef __cplusplus
 }
+#endif /* __cplusplus */
+#endif /* RNG_H */

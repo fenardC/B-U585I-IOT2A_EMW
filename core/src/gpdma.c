@@ -16,17 +16,17 @@
   * along with this program. If not, see <http://www.gnu.org/licenses/>.
   ******************************************************************************
   */
-#include "stdio_uart.h"
-#include "usart.h"
-/* #include "stm32u5xx_hal_uart.h" */
+#include "gpdma.h"
+#include "stm32u5xx_hal.h"
+/* #include "stm32u585xx.h" */
+/* #include "stm32u5xx_hal_rcc.h" */
+/* #include "stm32u5xx_hal_cortex.h" */
 
-int InitializeStdoutWithUart(void)
+void InitializeGPDMA1(void)
 {
-  return 0;
-}
-
-int io_putchar(char ch)
-{
-  HAL_UART_Transmit(&hUart1, (uint8_t *)&ch, 1, 0xFFFF);
-  return ch;
+  __HAL_RCC_GPDMA1_CLK_ENABLE();
+  HAL_NVIC_SetPriority(GPDMA1_Channel4_IRQn, 2, 0);
+  HAL_NVIC_EnableIRQ(GPDMA1_Channel4_IRQn);
+  HAL_NVIC_SetPriority(GPDMA1_Channel5_IRQn, 2, 0);
+  HAL_NVIC_EnableIRQ(GPDMA1_Channel5_IRQn);
 }

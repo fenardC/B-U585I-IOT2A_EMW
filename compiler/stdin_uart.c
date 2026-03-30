@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * Copyright (C) 2025 C.Fenard.
+  * Copyright (C) 2025-2026 C.Fenard.
   *
   * This program is free software: you can redistribute it and/or modify
   * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
   */
 #include "stdio_uart.h"
 #include "usart.h"
-//#include "stm32u5xx_hal_uart.h"
+/* #include "stm32u5xx_hal_uart.h" */
 #include <stdint.h>
 #include <string.h>
 
@@ -71,6 +71,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *uartPtr)
   if (uartPtr == &hUart1) {
     UartBufferWriteIdx++;
     UartBufferWriteIdx &= 0x0000003F;
-    HAL_UART_Receive_IT(uartPtr, (uint8_t *)&UartBuffer[UartBufferWriteIdx], 1);
+    (void) HAL_UART_Receive_IT(uartPtr, (uint8_t *)&UartBuffer[UartBufferWriteIdx], 1);
   }
 }

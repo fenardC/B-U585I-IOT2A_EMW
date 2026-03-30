@@ -16,17 +16,23 @@
   * along with this program. If not, see <http://www.gnu.org/licenses/>.
   ******************************************************************************
   */
-#include "stdio_uart.h"
-#include "usart.h"
-/* #include "stm32u5xx_hal_uart.h" */
+#ifndef SPI_H
+#define SPI_H
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+#include "stm32u5xx_hal.h"
 
-int InitializeStdoutWithUart(void)
-{
-  return 0;
-}
+//#include "stm32u5xx_hal_dma.h"
+//#include "stm32u5xx_hal_spi.h"
 
-int io_putchar(char ch)
-{
-  HAL_UART_Transmit(&hUart1, (uint8_t *)&ch, 1, 0xFFFF);
-  return ch;
+extern DMA_HandleTypeDef hGpdma1Channel5;
+extern DMA_HandleTypeDef hGpdma1Channel4;
+extern SPI_HandleTypeDef hSpi2;
+
+void InitializeSPI2(void);
+
+#ifdef __cplusplus
 }
+#endif /* __cplusplus */
+#endif /* SPI_H */

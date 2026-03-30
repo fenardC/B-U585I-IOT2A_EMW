@@ -16,17 +16,32 @@
   * along with this program. If not, see <http://www.gnu.org/licenses/>.
   ******************************************************************************
   */
-#include "stdio_uart.h"
-#include "usart.h"
-/* #include "stm32u5xx_hal_uart.h" */
+#include "dcache.h"
+#include "stm32u5xx_hal.h"
+/* #include "stm32u5xx_hal_dcache.h" */
+#include "main.hpp"
 
-int InitializeStdoutWithUart(void)
+static DCACHE_HandleTypeDef hDataCache1;
+
+void InitializeDCACHE1(void)
 {
-  return 0;
+  hDataCache1.Instance = DCACHE1;
+  hDataCache1.Init.ReadBurstType = DCACHE_READ_BURST_WRAP;
+  if (HAL_DCACHE_Init(&hDataCache1) != HAL_OK) {
+    ErrorHandler();
+  }
 }
 
-int io_putchar(char ch)
+void HAL_DCACHE_MspInit(const DCACHE_HandleTypeDef *cachePtr)
 {
-  HAL_UART_Transmit(&hUart1, (uint8_t *)&ch, 1, 0xFFFF);
-  return ch;
+  if (cachePtr->Instance == DCACHE1) {
+    __HAL_RCC_DCACHE1_CLK_ENABLE();
+  }
+}
+
+void HAL_DCACHE_MspDeInit(const DCACHE_HandleTypeDef *cachePtr)
+{
+  if (cachePtr->Instance == DCACHE1) {
+    __HAL_RCC_DCACHE1_CLK_DISABLE();
+  }
 }

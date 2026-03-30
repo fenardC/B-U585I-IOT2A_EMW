@@ -16,17 +16,15 @@
   * along with this program. If not, see <http://www.gnu.org/licenses/>.
   ******************************************************************************
   */
-#include "stdio_uart.h"
-#include "usart.h"
-/* #include "stm32u5xx_hal_uart.h" */
+#ifndef DCACHE_H
+#define DCACHE_H
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
-int InitializeStdoutWithUart(void)
-{
-  return 0;
-}
+void InitializeDCACHE1(void);
 
-int io_putchar(char ch)
-{
-  HAL_UART_Transmit(&hUart1, (uint8_t *)&ch, 1, 0xFFFF);
-  return ch;
+#ifdef __cplusplus
 }
+#endif /* __cplusplus */
+#endif /* DCACHE_H */

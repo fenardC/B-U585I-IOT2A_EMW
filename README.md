@@ -5,6 +5,13 @@ Wi-Fi examples and driver written with C/C++ languages
 
 This project aims at demonstrating some Wi-Fi examples and driver written with C/C++ languages.
 
+> [!IMPORTANT]
+> Do not forget to set your Wi-Fi credentials in the `wifi_emw.hpp` to connect correctly.
+
+> [!IMPORTANT]
+> In case a local echo server is running, the firewall TCP port used in this case MUST be allowed on the hosting machine.
+> The same is also to be done for iperf tests.
+
 _Cyril FENARD._
 
 # Key words

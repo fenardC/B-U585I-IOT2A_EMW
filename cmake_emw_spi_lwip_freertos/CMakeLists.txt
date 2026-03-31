@@ -70,6 +70,7 @@ add_executable(${PROJECT_NAME}
   ${APPLICATION_LWIP_SRC_PATH}/AppConsoleIperf.cpp
   ${APPLICATION_LWIP_SRC_PATH}/AppConsoleScan.cpp
   ${APPLICATION_LWIP_SRC_PATH}/AppConsoleStats.cpp
+  ${APPLICATION_LWIP_SRC_PATH}/AppDhcpService.cpp
   ${APPLICATION_LWIP_SRC_PATH}/AppLwipServices.cpp
   ${APPLICATION_LWIP_SRC_PATH}/AppWiFiLwip.cpp
   ${APPLICATION_LWIP_SRC_PATH}/lwip_wifi/emw/WiFiNetworkCore.cpp

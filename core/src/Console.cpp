@@ -475,34 +475,40 @@ static unsigned char GetUserInputCharWithFiltering(void)
   const unsigned char one_char = GetUserInputChar();
 
   if (ESC == one_char) {
-    const unsigned char first = GetUserInputChar();
-    const unsigned char second = GetUserInputChar();
+    HAL_Delay(1);
+    {
+      const unsigned char first = GetUserInputChar();
+      HAL_Delay(1);
+      {
+        const unsigned char second = GetUserInputChar();
 
-    if ((first == '[') && (second == 50)) {
-      /* discard 0x7E */
-      static_cast<void>(GetUserInputChar());
-      return KEY_INSERT_MODE;
-    }
-    if ((first == 79) && (second == 83)) {
-      return '-';
-    }
-    if ((first == 79) && (second == 82)) {
-      return '*';
-    }
-    if ((first == 79) && (second == 81)) {
-      return '/';
-    }
-    if ((first == '[') && (second == 65)) {
-      return KEY_UP;
-    }
-    if ((first == '[') && (second == 66)) {
-      return KEY_DOWN;
-    }
-    if ((first == '[') && (second == 67)) {
-      return KEY_RIGHT;
-    }
-    if ((first == '[') && (second == 68)) {
-      return KEY_LEFT;
+        if ((first == '[') && (second == 50)) {
+          /* discard 0x7E */
+          static_cast<void>(GetUserInputChar());
+          return KEY_INSERT_MODE;
+        }
+        if ((first == 79) && (second == 83)) {
+          return '-';
+        }
+        if ((first == 79) && (second == 82)) {
+          return '*';
+        }
+        if ((first == 79) && (second == 81)) {
+          return '/';
+        }
+        if ((first == '[') && (second == 65)) {
+          return KEY_UP;
+        }
+        if ((first == '[') && (second == 66)) {
+          return KEY_DOWN;
+        }
+        if ((first == '[') && (second == 67)) {
+          return KEY_RIGHT;
+        }
+        if ((first == '[') && (second == 68)) {
+          return KEY_LEFT;
+        }
+      }
     }
   }
   return one_char;

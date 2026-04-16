@@ -215,6 +215,8 @@ dhcp6_get_struct(struct netif *netif, const char *dbg_requester)
 {
   struct dhcp6 *dhcp6 = netif_dhcp6_data(netif);
 
+  (void)(dbg_requester);
+
   if (dhcp6 == NULL) {
     LWIP_DEBUGF(DHCP6_DEBUG | LWIP_DBG_TRACE, ("%s: mallocing new DHCPv6 client\n", dbg_requester));
     dhcp6 = (struct dhcp6 *)mem_malloc(sizeof(struct dhcp6));
@@ -254,6 +256,8 @@ dhcp6_get_struct(struct netif *netif, const char *dbg_requester)
 static void
 dhcp6_set_state(struct dhcp6 *dhcp6, u8_t new_state, const char *dbg_caller)
 {
+  (void)(dbg_caller);
+
   LWIP_DEBUGF(DHCP6_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE, ("DHCPv6 state: %d -> %d (%s)\n",
               dhcp6->state, new_state, dbg_caller));
 

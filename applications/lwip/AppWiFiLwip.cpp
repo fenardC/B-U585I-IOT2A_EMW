@@ -23,6 +23,7 @@
 #include "AppConsoleScan.hpp"
 #include "AppConsoleStats.hpp"
 #include "AppDhcpService.hpp"
+#include "AppHttpSSE.hpp"
 #include "EmwAddress.hpp"
 #include "EmwNetworkStack.hpp"
 #include "main.hpp"
@@ -133,6 +134,9 @@ extern "C" {
     {
       static const char ssid[33] = {WIFI_SSID};
       static const char psk[65] = {WIFI_PASSWORD};
+      class AppHttpSSE sse(the_application.lwipNetifSOFTAP);
+      sse.initializeServer(the_application.lwipNetifSOFTAP.ip_addr.u_addr.ip4.addr, 80);
+      STD_PRINTF("\nSSE Web server started (SOFTAP)\n");
 
       STD_PRINTF("\n Wi-Fi connection\n");
       the_application.connectToAp(ssid, psk);

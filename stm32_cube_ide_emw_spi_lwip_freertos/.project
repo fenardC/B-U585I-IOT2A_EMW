@@ -65,6 +65,11 @@
 			<locationURI>PARENT-1-PROJECT_LOC/applications/lwip/AppDhcpService.cpp</locationURI>
 		</link>
 		<link>
+			<name>application/AppHttpSSE.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/applications/lwip/AppHttpSSE.cpp</locationURI>
+		</link>
+		<link>
 			<name>application/AppLwipServices.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/applications/lwip/AppLwipServices.cpp</locationURI>

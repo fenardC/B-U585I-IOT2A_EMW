@@ -19,9 +19,7 @@
 #include "emw_conf.hpp"
 #include "EmwApiCore.hpp"
 #include "EmwAddress.hpp"
-#include "EmwCoreIpc.hpp"
 #include "EmwOsInterface.hpp"
-#include "EmwNetworkStack.hpp"
 #include <cinttypes>
 #include <cstring>
 #include <memory>
@@ -73,7 +71,8 @@ void EmwApiCore::getStatistics(void) noexcept
 }
 
 EmwApiCore::EmwApiCore() noexcept
-  : systemInformations()
+  : EmwCoreIpc()
+  , systemInformations()
   , stationSettings()
   , timeoutInMsForIPC(10000U)
   , softAccessPointSettings()
@@ -90,12 +89,12 @@ EmwApiCore::~EmwApiCore(void) noexcept
   DEBUG_API_LOG("\n EmwApiCore::~EmwApiCore()<%p\n\n", static_cast<const void*>(this))
 }
 
-EmwApiBase::Status EmwApiCore::checkNotified(std::uint32_t timeoutInMs) const noexcept
+EmwApiBase::Status EmwApiCore::checkNotified(std::uint32_t timeoutInMs) noexcept
 {
   DEBUG_API_LOG(" EmwApiCore::checkNotified()>\n")
 
   if (0U < EmwApiCore::interfaces) {
-    EmwCoreIpc::Poll(nullptr, this, timeoutInMs);
+    this->::EmwCoreIpc::Poll(static_cast<EmwCoreIpc*>(this), nullptr, timeoutInMs);
   }
   DEBUG_API_LOG(" EmwApiCore::checkNotified()<\n")
 
@@ -144,7 +143,7 @@ EmwApiBase::Status EmwApiCore::connect(const char (&ssidString)[33], const char 
       STRING_COPY_TO_ARRAY_CHAR(command_data.connectParams.ip.dnsServerAddress, ipAttributes.dnsServerAddress);
     }
 
-    if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+    if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
         BYTES_REF_CAST(&response_buffer), response_buffer_size, EmwCoreIpc::EMW_CMD_TIMEOUT)) {
       if (0 == response_buffer.status) {
         status = EmwApiBase::eEMW_STATUS_OK;
@@ -157,7 +156,7 @@ EmwApiBase::Status EmwApiCore::connect(const char (&ssidString)[33], const char 
 
 EmwApiBase::Status EmwApiCore::connectAdvance(const char (&ssidString)[33], const char (&passwordString)[65],
     const EmwApiBase::ConnectAttributes_t &attributes,
-    const EmwApiBase::IpAttributes_t &ipAttributes) const noexcept
+    const EmwApiBase::IpAttributes_t &ipAttributes) noexcept
 {
   EmwApiBase::Status status = EmwApiBase::eEMW_STATUS_ERROR;
   const std::size_t ssid_string_length = std::strlen(ssidString);
@@ -192,7 +191,7 @@ EmwApiBase::Status EmwApiCore::connectAdvance(const char (&ssidString)[33], cons
       command_data.connectParams.useIp = 1U;
       command_data.connectParams.ip = ipAttributes;
     }
-    if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+    if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
         BYTES_REF_CAST(&response_buffer), response_buffer_size, EmwCoreIpc::EMW_CMD_TIMEOUT)) {
       if (0 == response_buffer.status) {
         status = EmwApiBase::eEMW_STATUS_OK;
@@ -205,7 +204,7 @@ EmwApiBase::Status EmwApiCore::connectAdvance(const char (&ssidString)[33], cons
 
 EmwApiBase::Status EmwApiCore::connectEAP(const char (&ssidString)[33], const char (&identityString)[33],
     const char (&passwordString)[65], const EmwApiBase::EapAttributes_t &eapAttributes,
-    const EmwApiBase::IpAttributes_t &ipAttributes) const noexcept
+    const EmwApiBase::IpAttributes_t &ipAttributes) noexcept
 {
   EmwApiBase::Status status = EmwApiBase::eEMW_STATUS_ERROR;
   const std::size_t ssid_string_length = std::strlen(ssidString);
@@ -278,7 +277,7 @@ EmwApiBase::Status EmwApiCore::connectEAP(const char (&ssidString)[33], const ch
         command_data.eapConnectParams.ipUsed = 1U;
       }
       status = EmwApiBase::eEMW_STATUS_ERROR;
-      if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+      if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
           BYTES_REF_CAST(&response_buffer), response_buffer_size, EmwCoreIpc::EMW_CMD_TIMEOUT)) {
         if (0 == response_buffer.status) {
           status = EmwApiBase::eEMW_STATUS_OK;
@@ -290,7 +289,7 @@ EmwApiBase::Status EmwApiCore::connectEAP(const char (&ssidString)[33], const ch
   return status;
 }
 
-EmwApiBase::Status EmwApiCore::connectWPS(void) const noexcept
+EmwApiBase::Status EmwApiCore::connectWPS(void) noexcept
 {
   EmwApiBase::Status status = EmwApiBase::eEMW_STATUS_ERROR;
   EmwCoreIpc::IpcNoParams_t command_data(EmwCoreIpc::eWIFI_WPS_CONNECT_CMD);
@@ -299,7 +298,7 @@ EmwApiBase::Status EmwApiCore::connectWPS(void) const noexcept
 
   DEBUG_API_LOG("\n EmwApiCore::connectWPS()>\n")
 
-  if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+  if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
       BYTES_REF_CAST(&response_buffer), response_buffer_size, 15000U)) {
     if (0 == response_buffer.status) {
       status = EmwApiBase::eEMW_STATUS_OK;
@@ -309,7 +308,7 @@ EmwApiBase::Status EmwApiCore::connectWPS(void) const noexcept
   return status;
 }
 
-EmwApiBase::Status EmwApiCore::disconnect(void) const noexcept
+EmwApiBase::Status EmwApiCore::disconnect(void) noexcept
 {
   EmwApiBase::Status status = EmwApiBase::eEMW_STATUS_ERROR;
   EmwCoreIpc::IpcNoParams_t command_data(EmwCoreIpc::eWIFI_DISCONNECT_CMD);
@@ -318,7 +317,7 @@ EmwApiBase::Status EmwApiCore::disconnect(void) const noexcept
 
   DEBUG_API_LOG("\n EmwApiCore::disconnect()>\n")
 
-  if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+  if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
       BYTES_REF_CAST(&response_buffer), response_buffer_size, 15000U)) {
     if (0 == response_buffer.status) {
       status = EmwApiBase::eEMW_STATUS_OK;
@@ -335,11 +334,11 @@ EmwApiBase::Status EmwApiCore::getIPAddress(std::uint8_t (&ipAddressBytes)[4],
   EmwApiBase::Status status = EmwApiBase::eEMW_STATUS_ERROR;
   EmwCoreIpc::WiFiGetIpResponseParams_t response_buffer;
   std::uint16_t response_buffer_size = sizeof(response_buffer);
-  EmwCoreIpc::IpcInterfaceParams_t command_data(this->toIpcInterface(interface));
+  EmwCoreIpc::IpcInterfaceParams_t command_data(ToIpcInterface(interface));
 
   DEBUG_API_LOG("\n EmwApiCore::getIPAddress()>\n");
 
-  if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+  if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
       BYTES_REF_CAST(&response_buffer), response_buffer_size, EmwApiCore::GET_IP_ADDRESS_TIMEOUT)) {
     if (0 == response_buffer.status) {
       {
@@ -380,11 +379,11 @@ EmwApiBase::Status EmwApiCore::getIP6Address(std::uint8_t (&ip6AddressBytes)[16]
   DEBUG_API_LOG("\n EmwApiCore::getIP6Address()>\n")
 
   if (addressSlot < 3U) {
-    EmwCoreIpc::IpcWiFiGetIp6AddrParams_t command_data(addressSlot, this->toIpcInterface(interface));
+    EmwCoreIpc::IpcWiFiGetIp6AddrParams_t command_data(addressSlot, ToIpcInterface(interface));
     EmwCoreIpc::WiFiGetIp6AddrResponseParams_t response_buffer;
     std::uint16_t response_buffer_size = sizeof(response_buffer);
 
-    if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+    if (EmwCoreIpc::eSUCCESS == this->EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
         BYTES_REF_CAST(&response_buffer), response_buffer_size, EmwApiCore::GET_IP_ADDRESS_TIMEOUT)) {
       if (0 == response_buffer.status) {
         static_cast<void>(std::memcpy(this->stationSettings.ipv6Address[addressSlot], response_buffer.ip6,
@@ -398,7 +397,7 @@ EmwApiBase::Status EmwApiCore::getIP6Address(std::uint8_t (&ip6AddressBytes)[16]
   return status;
 }
 
-int32_t EmwApiCore::getIP6AddressState(std::uint8_t addressSlot, EmwApiBase::EmwInterface interface) const noexcept
+int32_t EmwApiCore::getIP6AddressState(std::uint8_t addressSlot, EmwApiBase::EmwInterface interface) noexcept
 {
   std::int32_t state = -1;
   EmwCoreIpc::IpcAddressSlotInterfaceParams_t command_data;
@@ -410,7 +409,7 @@ int32_t EmwApiCore::getIP6AddressState(std::uint8_t addressSlot, EmwApiBase::Emw
   command_data.addressSlotInterfaceNum.addressSlot = addressSlot;
   command_data.addressSlotInterfaceNum.interfaceNum = ToIpcInterface(interface);
 
-  if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+  if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
       BYTES_REF_CAST(&response_buffer), response_buffer_size, EmwCoreIpc::EMW_CMD_TIMEOUT)) {
     state = static_cast<std::int32_t>(response_buffer.state);
   }
@@ -440,7 +439,7 @@ EmwApiBase::Status EmwApiCore::getSoftApMacAddress(EmwApiCore::MacAddress_t &mac
 
   DEBUG_API_LOG("\nEmwApiCore::getSoftApMacAddress()>\n")
 
-  if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+  if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
       BYTES_REF_CAST(&this->systemInformations.mac48bitsSoftAp[0]), response_buffer_size,
       EMW_CMD_TIMEOUT)) {
     static_cast<void>(std::memcpy(mac.bytes, &this->systemInformations.mac48bitsSoftAp[0], sizeof(mac.bytes)));
@@ -450,7 +449,7 @@ EmwApiBase::Status EmwApiCore::getSoftApMacAddress(EmwApiCore::MacAddress_t &mac
   return status;
 }
 
-EmwApiBase::Status EmwApiCore::getVersion(char (&version)[25], std::uint32_t versionSize) const noexcept
+EmwApiBase::Status EmwApiCore::getVersion(char (&version)[25], std::uint32_t versionSize) noexcept
 {
   EmwApiBase::Status status = EmwApiBase::eEMW_STATUS_ERROR;
 
@@ -460,7 +459,7 @@ EmwApiBase::Status EmwApiCore::getVersion(char (&version)[25], std::uint32_t ver
     std::uint16_t response_buffer_size = sizeof(firmware_revision);
 
     VOID_MEMSET_ARRAY(firmware_revision, 0);
-    if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+    if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
         BYTES_REF_CAST(&firmware_revision[0]), response_buffer_size, EmwCoreIpc::EMW_CMD_TIMEOUT)) {
       static_cast<void>(std::memcpy(version, &firmware_revision[0], versionSize));
       version[versionSize - 1U] = '\0';
@@ -516,7 +515,7 @@ EmwApiBase::Status EmwApiCore::initialize(void) noexcept
     EmwCoreIpc::IpcNoParams_t command_data(EmwCoreIpc::eSYS_VERSION_CMD);
     std::uint16_t response_buffer_size = sizeof(this->systemInformations.firmwareRevision);
 
-    if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+    if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
         BYTES_REF_CAST(&this->systemInformations.firmwareRevision[0]), response_buffer_size, EmwCoreIpc::EMW_CMD_TIMEOUT)) {
       {
         const char firmware_revision_required_string[] = "V2.3.4";
@@ -537,7 +536,7 @@ EmwApiBase::Status EmwApiCore::initialize(void) noexcept
     EmwCoreIpc::IpcNoParams_t command_data(EmwCoreIpc::eWIFI_GET_MAC_CMD);
     std::uint16_t response_buffer_size = sizeof(this->systemInformations.mac48bitsStation);
 
-    if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+    if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
         BYTES_REF_CAST(&this->systemInformations.mac48bitsStation[0]), response_buffer_size, EmwCoreIpc::EMW_CMD_TIMEOUT)) {
       status = EmwApiBase::eEMW_STATUS_OK;
     }
@@ -558,7 +557,7 @@ std::int8_t EmwApiCore::isConnected(void) noexcept
 
   DEBUG_API_LOG("\n EmwApiCore::isConnected()>\n")
 
-  if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+  if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
       BYTES_REF_CAST(&response_buffer), response_buffer_size, EmwCoreIpc::EMW_CMD_TIMEOUT)) {
     if (0 == response_buffer.status) {
       this->stationSettings.isConnected = static_cast<std::int8_t>(response_buffer.info.isConnected);
@@ -591,7 +590,7 @@ EmwApiBase::Status EmwApiCore::registerStatusCallback(const EmwApiBase::WiFiStat
   return status;
 }
 
-EmwApiBase::Status EmwApiCore::resetHardware(void) const noexcept
+EmwApiBase::Status EmwApiCore::resetHardware(void) noexcept
 {
   EmwApiBase::Status status = EmwApiBase::eEMW_STATUS_OK;
 
@@ -600,7 +599,7 @@ EmwApiBase::Status EmwApiCore::resetHardware(void) const noexcept
   DEBUG_API_LOG("\n[%6" PRIu32 "] EmwApiCore::resetHardware()>\n", HAL_GetTick())
 
   if (0U == EmwApiCore::interfaces) {
-    EmwCoreIpc::ResetIo();
+    this->EmwCoreIpc::resetIo();
   }
   {
     static bool done_once = false;
@@ -618,7 +617,7 @@ EmwApiBase::Status EmwApiCore::resetHardware(void) const noexcept
   return status;
 }
 
-EmwApiBase::Status EmwApiCore::resetModule(void) const noexcept
+EmwApiBase::Status EmwApiCore::resetModule(void) noexcept
 {
   EmwApiBase::Status status = EmwApiBase::eEMW_STATUS_ERROR;
   EmwCoreIpc::IpcNoParams_t command_data(EmwCoreIpc::eSYS_REBOOT_CMD);
@@ -627,7 +626,7 @@ EmwApiBase::Status EmwApiCore::resetModule(void) const noexcept
 
   DEBUG_API_LOG("\n[%" PRIu32 "] EmwApiCore::resetModule()>\n", HAL_GetTick())
 
-  if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+  if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
       BYTES_REF_CAST(&response_buffer), response_buffer_size, EmwCoreIpc::EMW_CMD_TIMEOUT)) {
     status = EmwApiBase::eEMW_STATUS_OK;
   }
@@ -635,14 +634,14 @@ EmwApiBase::Status EmwApiCore::resetModule(void) const noexcept
   return status;
 }
 
-EmwApiBase::Status EmwApiCore::resetToFactoryDefault(void) const noexcept
+EmwApiBase::Status EmwApiCore::resetToFactoryDefault(void) noexcept
 {
   EmwApiBase::Status status = EmwApiBase::eEMW_STATUS_ERROR;
   EmwCoreIpc::IpcNoParams_t command_data(EmwCoreIpc::eSYS_RESET_CMD);
   EmwCoreIpc::SysCommonResponseParams_t response_buffer;
   std::uint16_t response_buffer_size = sizeof(response_buffer);
 
-  if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+  if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
       BYTES_REF_CAST(&response_buffer), response_buffer_size, EmwCoreIpc::EMW_CMD_TIMEOUT)) {
     status = EmwApiBase::eEMW_STATUS_OK;
   }
@@ -672,7 +671,7 @@ EmwApiBase::Status EmwApiCore::scan(EmwApiBase::ScanMode scanMode,
     else {
       STRING_COPY_TO_ARRAY_INT8(command_data.scanParams.ssid, "");
     }
-    if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+    if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
         BYTES_REF_CAST(&this->lastScanResults), scan_results_size, EmwApiCore::SCAN_TIMEOUT_IN_MS)) {
       status = EmwApiBase::eEMW_STATUS_OK;
     }
@@ -687,13 +686,13 @@ EmwApiBase::Status EmwApiCore::setTimeout(std::uint32_t timeoutInMs) noexcept
   EmwApiBase::Status status = EmwApiBase::eEMW_STATUS_ERROR;
 
   if (0U < EmwApiCore::interfaces) {
-    this->timeoutInMs = timeoutInMs;
+    this->timeoutInMsForIPC = timeoutInMs;
     status = EmwApiBase::eEMW_STATUS_OK;
   }
   return status;
 }
 
-EmwApiBase::Status EmwApiCore::startSoftAp(const EmwApiBase::SoftApSettings_t &accessPointSettings) const noexcept
+EmwApiBase::Status EmwApiCore::startSoftAp(const EmwApiBase::SoftApSettings_t &accessPointSettings) noexcept
 {
   EmwApiBase::Status status = EmwApiBase::eEMW_STATUS_ERROR;
   EmwCoreIpc::IpcWiFiSoftApStartParams_t command_data;
@@ -714,7 +713,7 @@ EmwApiBase::Status EmwApiCore::startSoftAp(const EmwApiBase::SoftApSettings_t &a
   STRING_COPY_TO_ARRAY_CHAR(command_data.softApStartParams.ip.dnsServerAddress,
                             accessPointSettings.ip.dnsServerAddress);
 
-  if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+  if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
       BYTES_REF_CAST(&response_buffer), response_buffer_size, 3000U)) {
     if (0 == response_buffer.status) {
       status = EmwApiBase::eEMW_STATUS_OK;
@@ -724,14 +723,14 @@ EmwApiBase::Status EmwApiCore::startSoftAp(const EmwApiBase::SoftApSettings_t &a
   return status;
 }
 
-EmwApiBase::Status EmwApiCore::stopSoftAp(void) const noexcept
+EmwApiBase::Status EmwApiCore::stopSoftAp(void) noexcept
 {
   EmwApiBase::Status status = EmwApiBase::eEMW_STATUS_ERROR;
   EmwCoreIpc::IpcNoParams_t command_data(EmwCoreIpc::eWIFI_SOFTAP_STOP_CMD);
   EmwCoreIpc::SysCommonResponseParams_t response_buffer;
   std::uint16_t response_buffer_size = sizeof(response_buffer);
 
-  if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+  if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
       BYTES_REF_CAST(&response_buffer), response_buffer_size, EmwCoreIpc::EMW_CMD_TIMEOUT)) {
     if (0 == response_buffer.status) {
       status = EmwApiBase::eEMW_STATUS_OK;
@@ -741,14 +740,14 @@ EmwApiBase::Status EmwApiCore::stopSoftAp(void) const noexcept
   return status;
 }
 
-EmwApiBase::Status EmwApiCore::stopWPS(void) const noexcept
+EmwApiBase::Status EmwApiCore::stopWPS(void) noexcept
 {
   EmwApiBase::Status status = EmwApiBase::eEMW_STATUS_ERROR;
   EmwCoreIpc::IpcNoParams_t command_data(EmwCoreIpc::eWIFI_WPS_STOP_CMD);
   EmwCoreIpc::SysCommonResponseParams_t response_buffer;
   std::uint16_t response_buffer_size = sizeof(response_buffer);
 
-  if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+  if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
       BYTES_REF_CAST(&response_buffer), response_buffer_size, EmwCoreIpc::EMW_CMD_TIMEOUT)) {
     if (0 == response_buffer.status) {
       status = EmwApiBase::eEMW_STATUS_OK;
@@ -775,7 +774,7 @@ EmwApiBase::Status EmwApiCore::unRegisterStatusCallback(EmwApiBase::EmwInterface
 }
 
 EmwApiBase::Status EmwApiCore::setEapCert(std::uint8_t certificateType, const char *certificateStringPtr,
-    std::uint32_t length) const noexcept
+    std::uint32_t length) noexcept
 {
   EmwApiBase::Status status = EmwApiBase::eEMW_STATUS_ERROR;
   static_cast<void>(length);
@@ -796,7 +795,7 @@ EmwApiBase::Status EmwApiCore::setEapCert(std::uint8_t certificateType, const ch
     command_data_ptr->eapSetCertParams.length = static_cast<std::uint16_t>(certificate_length);
     static_cast<void>(std::memcpy(command_data_ptr->eapSetCertParams.cert, certificateStringPtr, certificate_length));
 
-    if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(command_data_ptr.get()), command_data_size,
+    if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(command_data_ptr.get()), command_data_size,
         BYTES_REF_CAST(&response_buffer), response_buffer_size, EmwCoreIpc::EMW_CMD_TIMEOUT)) {
       if (0 == response_buffer.status) {
         status = EmwApiBase::eEMW_STATUS_OK;
@@ -818,7 +817,7 @@ std::int32_t EmwApiCore::stationPowerSave(std::int32_t onOff) noexcept
     const EmwCoreIpc::CmdParams_s ipc_params(EmwCoreIpc::eWIFI_PS_ON_CMD);
     command_data.ipcParams = ipc_params;
   }
-  if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
+  if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
       BYTES_REF_CAST(&response_buffer), response_buffer_size, EmwCoreIpc::EMW_CMD_TIMEOUT)) {
     if (0 == response_buffer.status) {
       status = 0;
@@ -829,11 +828,11 @@ std::int32_t EmwApiCore::stationPowerSave(std::int32_t onOff) noexcept
 }
 
 EmwApiBase::Status EmwApiCore::testIpcEcho(std::uint8_t (&dataIn)[], std::uint16_t dataInLength,
-    std::uint8_t (&dataOut)[], std::uint16_t &dataOutLength) const noexcept
+    std::uint8_t (&dataOut)[], std::uint16_t &dataOutLength) noexcept
 {
   EmwApiBase::Status status;
 
-  if (EmwCoreIpc::eSUCCESS == EmwCoreIpc::testEcho(*this, dataIn, dataInLength, dataOut, dataOutLength)) {
+  if (EmwCoreIpc::eSUCCESS == this->::EmwCoreIpc::testEcho(dataIn, dataInLength, dataOut, dataOutLength)) {
     status = EmwApiBase::eEMW_STATUS_OK;
   }
   else {
@@ -874,7 +873,7 @@ EmwOsInterface::Thread_t EmwApiCore::ReceiveThread;
 
 void EmwApiCore::ReceiveThreadFunction(EmwOsInterface::ThreadFunctionArgument_t argument) noexcept
 {
-  const class EmwApiCore *const THIS = static_cast<const class EmwApiCore *>(argument);
+  EmwApiCore *const THIS = reinterpret_cast<EmwApiCore *>(const_cast<void*>(argument));
 
 #if defined(EMW_API_DEBUG)
   std::setbuf(stdout, nullptr);
@@ -884,7 +883,7 @@ void EmwApiCore::ReceiveThreadFunction(EmwOsInterface::ThreadFunctionArgument_t 
 
   EmwApiCore::ReceiveThreadQuitFlag = false;
   while (EmwApiCore::ReceiveThreadQuitFlag != true) {
-    EmwCoreIpc::Poll(nullptr, THIS, 500U);
+    EmwCoreIpc::Poll(static_cast<::EmwCoreIpc*>(THIS), nullptr, 500U);
   }
   EmwApiCore::ReceiveThreadQuitFlag = false;
   EmwOsInterface::ExitThread();
@@ -893,10 +892,11 @@ void EmwApiCore::ReceiveThreadFunction(EmwOsInterface::ThreadFunctionArgument_t 
 
 void EmwApiCore::processEvent(EmwNetworkStack::Buffer_t *networkBufferPtr, std::uint16_t apiId) noexcept
 {
-  static const struct {
+  struct Entry_s {
     std::uint16_t eventId;
     EventCallback_t callback;
-  } EVENTS_TABLE[] = {
+  };
+  static constexpr struct Entry_s EVENTS_TABLE[] = {
 #if defined(EMW_NETWORK_BYPASS_MODE)
     {EmwCoreIpc::eWIFI_BYPASS_INPUT_EVENT, EmwApiCore::ProcessWiFiNetlinkInput},
 #endif /* EMW_NETWORK_BYPASS_MODE */
@@ -904,28 +904,21 @@ void EmwApiCore::processEvent(EmwNetworkStack::Buffer_t *networkBufferPtr, std::
     {EmwCoreIpc::eSYS_REBOOT_EVENT, EmwApiCore::ProcessRebootEvent},
     {EmwCoreIpc::eSYS_FOTA_STATUS_EVENT, EmwApiCore::ProcessFotaStatusEvent}
   };
-  const std::uint32_t EVENT_TABLE_COUNT = sizeof(EVENTS_TABLE) / sizeof(EVENTS_TABLE[0]);
-  std::uint32_t i;
 
   DEBUG_API_LOG("    EmwApiCore::processEvent(%p)> api_id: 0x%04" PRIx32 "\n",
                 static_cast<const void *>(this), static_cast<std::uint32_t>(apiId))
 
-  for (i = 0U; i < EVENT_TABLE_COUNT; i++) {
-    if (EVENTS_TABLE[i].eventId == apiId) {
-      const EventCallback_t callback = EVENTS_TABLE[i].callback;
-      if (nullptr != callback) {
-        callback(this, networkBufferPtr);
-        break;
-      }
+  for (const auto& entry : EVENTS_TABLE) {
+    if (apiId == entry.eventId) {
+      entry.callback(this, networkBufferPtr);
+      return;
     }
   }
-  if (i == EVENT_TABLE_COUNT) {
-    DEBUG_API_LOG("    EmwApiCore::processEvent(): Unknown event!\n")
-    DRIVER_ERROR_VERBOSE("IPC with Unknown event!\n")
 
-    if (nullptr != networkBufferPtr) {
-      EmwNetworkStack::FreeBuffer(networkBufferPtr);
-    }
+  DRIVER_ERROR_VERBOSE("IPC with Unknown event!\n")
+
+  if (nullptr != networkBufferPtr) {
+    EmwNetworkStack::FreeBuffer(networkBufferPtr);
   }
 }
 

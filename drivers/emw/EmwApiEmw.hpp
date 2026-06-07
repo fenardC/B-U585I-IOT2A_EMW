@@ -21,7 +21,6 @@
 #include "EmwAddress.hpp"
 #include "EmwApiBase.hpp"
 #include "EmwApiCore.hpp"
-#include "EmwCoreIpc.hpp"
 #include <cstdint>
 
 class EmwApiEmw final : public EmwApiCore {

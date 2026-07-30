@@ -225,13 +225,15 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 ##### Please enter one of the following command:
 
 echo         echo [-cCount] [-6] <ip>
+http         http [-l<size>] [-6] <req> (default is http://test-debit.free.fr/image.iso)
 iperf        iperf [-s | -c <ip>]
 ping         ping [-6] <hostname> (default is google.fr)
 scan         Wi-Fi scan
 stats        Get LwIP statistics
+app>
 app> iperf -s
 iperf: Started a TCP server on the default TCP port (5001)
-app>
+
 LWIPERF_TCP_DONE_SERVER
 local address    : 192.168.1.113
 local port       : 5001
@@ -240,5 +242,17 @@ remote port      : 65403
 bytes transferred: 8387172
 duration         : 10452 ms
 bandwidth        : 6416 kBits/s
-
+app>
+app> http -6
+ http: default request: "http://test-debit.free.fr/image.iso"
+ http: <http://test-debit.free.fr/image.iso>
+ http: host "test-debit.free.fr"
+ http: req "/image.iso"
+ http: -> "test-debit.free.fr" with 2A01:E0C:1:1598::3
+ http: device connected
+ http: downloading file /image.iso from "test-debit.free.fr"
+ http: file size 678428672 bytes
+ http: limiting transfer to first 140000 bytes with report time of 10000 ms
+............................................................................................
+ http: transfer 140000 bytes, duration 177 ms, bitrate 6327 kbit/s
 ```

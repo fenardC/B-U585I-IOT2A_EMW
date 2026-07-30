@@ -17,6 +17,7 @@
   ******************************************************************************
   */
 #include "AppWiFiLwip.hpp"
+#include "AppConsoleDownload.hpp"
 #include "AppConsoleEcho.hpp"
 #include "AppConsoleIperf.hpp"
 #include "AppConsolePing.hpp"
@@ -134,23 +135,26 @@ extern "C" {
     {
       static const char ssid[33] = {WIFI_SSID};
       static const char psk[65] = {WIFI_PASSWORD};
-      class AppHttpSSE sse(the_application.lwipNetifSOFTAP);
-      sse.initializeServer(the_application.lwipNetifSOFTAP.ip_addr.u_addr.ip4.addr, 80);
+
+      class AppHttpSSE sse(the_application.lwipNetifSoftAp);
+      sse.initializeServer(the_application.lwipNetifSoftAp.ip_addr.u_addr.ip4.addr, 80);
       STD_PRINTF("\nSSE Web server started (SOFTAP)\n");
 
       STD_PRINTF("\n Wi-Fi connection\n");
       the_application.connectToAp(ssid, psk);
-    }
-    {
-      class AppConsoleEcho echo;
-      class AppConsoleIperf iperf(the_application.lwipNetifStation);
-      class AppConsolePing ping(the_application.lwipNetifStation);
-      class AppConsoleScan scan;
-      class AppConsoleStats stats;
-      class Cmd *cmds[] = {&echo, &iperf, &ping, &scan, &stats, nullptr};
-      class Console the_console("app>", cmds);
 
-      the_console.run();
+      {
+        class AppConsoleEcho echo;
+        class AppConsoleDownload http;
+        class AppConsoleIperf iperf(the_application.lwipNetifStation);
+        class AppConsolePing ping(the_application.lwipNetifStation);
+        class AppConsoleScan scan;
+        class AppConsoleStats stats;
+        class Cmd *cmds[] = {&echo, &http, &iperf, &ping, &scan, &stats, nullptr};
+        class Console the_console("app>", cmds);
+
+        the_console.run();
+      }
     }
 
     STD_PRINTF("\nWi-Fi network interface un-initialization (STATION)\n");
@@ -322,7 +326,6 @@ void AppWiFiLwip::enableSoftAp(const char (&ssidString)[33], const char (&passwo
   STD_PRINTF("          - GW address      : %s\n", ipaddr_ntoa(&this->lwipNetifSoftAp.gw));
 
   STD_PRINTF("Starting the DHCP server ...\n");
-
   {
     static AppDhcpService dhcp_server(&this->lwipNetifSoftAp);
     if (0 != dhcp_server.createService()) {

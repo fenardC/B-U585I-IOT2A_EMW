@@ -21,6 +21,7 @@
 #include "AppConsolePing.hpp"
 #include "AppConsoleScan.hpp"
 #include "AppConsoleStats.hpp"
+#include "AppConsoleDownload.hpp"
 #include "EmwAddress.hpp"
 #include "EmwApiEmw.hpp"
 #include "emw_conf.hpp"
@@ -117,10 +118,11 @@ extern "C" {
 
       {
         class AppConsoleEcho echo(emw);
+        class AppConsoleDownload http(emw);
         class AppConsolePing ping(emw);
         class AppConsoleScan scan;
         class AppConsoleStats stats(emw);
-        class Cmd *cmds[] = {&echo, &ping, &scan, &stats, nullptr};
+        class Cmd *cmds[] = {&echo, &http, &ping, &scan, &stats, nullptr};
         class Console the_console("app>", cmds);
 
         the_console.run();
@@ -231,7 +233,7 @@ void AppWiFiEmw::connectToAp(class EmwApiEmw &emw, const char (&ssidString)[33],
                    static_cast<std::uint32_t>(interface), static_cast<std::uint32_t>(address_slot), address_state);
         status = emw.getIP6Address(ip6_addr_bytes, address_slot, static_cast<EmwApiBase::EmwInterface>(interface));
         if (EmwApiBase::eEMW_STATUS_OK != status) {
-          STD_PRINTF(" failed to get IPv6 address (%" PRId32 ")\n", static_cast<std::int32_t>(status));
+          STD_PRINTF(" Failed to get IPv6 address (%" PRId32 ")\n", static_cast<std::int32_t>(status));
         }
         STD_PRINTF(" IPv6 address (%" PRIu32 ")(%" PRIu32 "): "
                    "%02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n\n",

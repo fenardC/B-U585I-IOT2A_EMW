@@ -60,6 +60,11 @@
 			<locationURI>PARENT-1-PROJECT_LOC/applications/emw/AppConsoleStats.cpp</locationURI>
 		</link>
 		<link>
+			<name>application/AppConsoleTls.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/applications/emw/AppConsoleTls.cpp</locationURI>
+		</link>
+		<link>
 			<name>application/AppWiFiEmw.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/applications/emw/AppWiFiEmw.cpp</locationURI>

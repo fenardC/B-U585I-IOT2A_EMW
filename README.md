@@ -24,8 +24,9 @@ CRTP, DMA, EMW, FreeRTOS, LwIP, RAII, SSE, SPI, STM32, TCP, UDP, Wi-Fi
 
 ## Software
 
-**C++** **STM32CubeIDE** **Cmake** **Ninja** **Visual Studio Code**
-**Windows** **Cygwin** **Linux** **VirtualBox**
+**C++**, **STM32CubeIDE**, **Cmake**, **Ninja**, **Visual Studio Code**
+
+**Windows**, **Cygwin**, **Linux**, **VirtualBox**
 
 
 # Check development environment
@@ -46,7 +47,7 @@ CRTP, DMA, EMW, FreeRTOS, LwIP, RAII, SSE, SPI, STM32, TCP, UDP, Wi-Fi
     version=1.19.0
 
     $ /cygdrive/c/Program\ Files/Cppcheck/cppcheck --version
-    Cppcheck 2.16.0
+    Cppcheck 2.20.0
 
     $ iperf -v
     iperf version 2.0.13 (21 Jan 2019) pthreads
@@ -109,12 +110,30 @@ CRTP, DMA, EMW, FreeRTOS, LwIP, RAII, SSE, SPI, STM32, TCP, UDP, Wi-Fi
     -DEMW_API_DEBUG -DEMW_IPC_DEBUG -DEMW_HCI_DEBUG -DEMW_IO_DEBUG -UEMW_OS_DEBUG_LOG \
     *.cpp
 ```
+```shell
+    $ cd cmake_emw_spi_no_os && cmake -Bbuild -G "Ninja" && cd build && \
+    analyze-build --cdb compile_commands.json \
+    --use-analyzer ../../cmake_hardware_board/fake_clang.sh --status-bugs \
+    --analyzer-config aggressive-binary-operation-simplification=true \
+    --analyzer-config aggressive=true -enable-checker alpha -enable-checker security \
+    -enable-checker unix -enable-checker cplusplus -enable-checker deadcode -enable-checker nullability \
+    -enable-checker core \
+    --output ..
+```
 
   * building the applications
-    $
+```shell
+    $ cd cmake_emw_spi_no_os && cmake -Bbuild -G "Ninja" && cd build && cmake --build .
+    $ cd cmake_emw_spi_freertos && cmake -Bbuild -G "Ninja" && cd build && cmake --build .
+    $ cd cmake_emw_spi_lwip_freertos && cmake -Bbuild -G "Ninja" && cd build && cmake --build .
+```
 
   * running the applications
-    $
+```shell
+   $ cd cmake_emw_spi_no_os/build && cp emw_spi_no_os.bin /var/run/media/fenard1/DIS_U585AI/
+   $ cd cmake_emw_spi_freertos/build && cp emw_spi_freertos.bin /var/run/media/fenard1/DIS_U585AI/
+   $ cd cmake_emw_spi_lwip_freertos/build && cp emw_spi_lwip_freertos.bin /var/run/media/fenard1/DIS_U585AI/
+```
 
 ```shell
 Welcome

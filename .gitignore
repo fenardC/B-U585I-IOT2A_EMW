@@ -52,3 +52,6 @@ Debug/
 doc/
 doxygen/
 test/
+
+scan-build-*/
+

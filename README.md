@@ -115,3 +115,111 @@ CRTP, DMA, EMW, FreeRTOS, LwIP, RAII, SSE, SPI, STM32, TCP, UDP, Wi-Fi
 
   * running the applications
     $
+
+```shell
+Welcome
+
+[   135] main(): Jun  7 2026 17:32:57  ( __GNUC__)   : 130 ms for 1600000 loops
+
+ std::rand() seeded by -749746119 returned 1629264863
+
+BUFSIZ 1024
+ ---------------------------------------------------------
+ CPUID: 410FD214, DEVID: 482, REVID: 2001
+ Cortex M33 r0p4
+ ---------------------------------------------------------
+ ---------------------------------------------------------
+ CheckExceptionHandling(): **Checking C++ exception**
+ ---------------------------------------------------------
+
+ main(): sp : 0x200bff68
+ main(): end: 0x200449b8
+ main(): clk:  160000000
+ main(): StackType_t with: 4
+
+ [191] FreeRtosMainTask(): STM32_THREAD_SAFE_STRATEGY (4) (4 - 1)
+MEM_SIZE           :  61440
+PBUF_POOL_BUFSIZE  :   1544
+
+LWIP_IPV4, LWIP_IPV6
+SPI+DMA, FreeRTOS(V11.2.0), Network on STM32
+NETWORK_BUFFER_SIZE:   1542
+
+[   217] InitializeEmw(): REBOOT(HW) ...
+ - Device Name    : MXCHIP-WIFI.
+ - Device ID      : EMW3080B.
+ - Device Version : V2.3.4.
+ - MAC address    : 84.9D.C2.96.C8.E0
+
+[  1551] Checking Emw Io Speed (130 x (1542 + 1542)) ...
+[  1866] ... transferred: 400920 bytes, time: 310 ms, Speed: 10346 Kbps
+
+Wi-Fi network interface initialization (SOFTAP)
+[  1883] Wi-Fi driver ready (SOFTAP):
+
+Wi-Fi network interface initialization (STATION)
+[  1891] Wi-Fi driver ready (STATION):
+
+Start Software enabled Access Point with "MyHotSpot"
+
+[  2246] Wi-Fi interface ready (SOFTAP):
+          - name        : "MA".
+          - hostname    : "lwip-softap".
+          - mtu         : 1500.
+          - MAC         : 84.9D.C2.96.C8.E1
+
+[  2264] Network interface ready (SOFTAP):
+          - IP address      : 10.10.10.1
+          - Netmask         : 255.255.255.0
+          - GW address      : 10.10.10.1
+Starting the DHCP server ...
+
+ Wi-Fi scan
+ ######### Scan 10 BSS ##########
+ ######### End of Scan ##########
+
+SSE Web server started (SOFTAP)
+
+ Wi-Fi connection
+
+AppWiFiLwip::connectToAp()> joining "XXXXXXX" with "ZZZZZZZZZZ" ...
+cccccccccccccccccccccccccccc
+[  6688] Wi-Fi interface ready (STATION):
+          - name        : "MS".
+          - hostname    : "lwip-sta".
+          - mtu         : 1500.
+          - MAC         : 84.9D.C2.96.C8.E0
+[  6706] Setting IPv6 link-local address
+[  6709] Calling dhcp_start()
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+[ 13412] Network interface connected (STATION):
+          - IP address      : 192.168.1.113
+          - Netmask         : 255.255.255.0
+          - GW address      : 192.168.1.254
+          - IP6 address (0) : FE80::AAAA:BBBB:FE96:C8E0 [48]
+          - IP6 address (1) : 2001:CCC:DDDD:EEEE:FFFF:GGGG:FE96:C8E0 [48]
+          - IP6 address (2) : :: [0]
+          - DNS_0 address   : 2001:HHH:IIII:JJJJ:KKKK:LLLL:MMMM:NNNN
+          - DNS_1 address   : 0.0.0.0
+          - DNS_2 address   : 2001:4860:4860::8888
+
+##### Please enter one of the following command:
+
+echo         echo [-cCount] [-6] <ip>
+iperf        iperf [-s | -c <ip>]
+ping         ping [-6] <hostname> (default is google.fr)
+scan         Wi-Fi scan
+stats        Get LwIP statistics
+app> iperf -s
+iperf: Started a TCP server on the default TCP port (5001)
+app>
+LWIPERF_TCP_DONE_SERVER
+local address    : 192.168.1.113
+local port       : 5001
+remote address   : 192.168.1.19
+remote port      : 65403
+bytes transferred: 8387172
+duration         : 10452 ms
+bandwidth        : 6416 kBits/s
+
+```

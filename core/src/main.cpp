@@ -30,6 +30,11 @@
 
 #if defined(COMPILATION_WITH_EMW)
 #include "AppWiFiEmw.hpp"
+#elif defined(COMPILATION_WITH_LWIP)
+#include "AppWiFiLwip.hpp"
+#include "WiFiNetworkCore.hpp"
+#include "lwip/init.h"
+#include "lwip/tcpip.h"
 #endif /* COMPILATION_WITH_EMW) */
 
 #include "wifi_emw.hpp"
@@ -154,10 +159,12 @@ int main(void)
 static void InitializeMainTask(void)
 {
 #if defined(COMPILATION_WITH_NO_OS)
+#if defined(COMPILATION_WITH_EMW)
   InitializeEmw(Emw);
   AppTaskFunction(&Emw);
 #elif defined(COMPILATION_WITH_LWIP)
 #error "NOT YET SUPPORTED"
+#endif /* COMPILATION_WITH_EMW */
 #endif /* COMPILATION_WITH_NO_OS */
 
 #if defined(COMPILATION_WITH_FREERTOS)
@@ -166,6 +173,8 @@ static void InitializeMainTask(void)
     void *arg_ptr = NULL;
 #if defined(COMPILATION_WITH_EMW)
     arg_ptr = &Emw;
+#elif defined(COMPILATION_WITH_LWIP)
+    arg_ptr = &EmwBypass;
 #endif /* COMPILATION_WITH_EMW */
     static_cast<void>(xTaskCreate(FreeRtosMainTask, main_task_name, 1024U, arg_ptr, 16U, NULL));
   }
@@ -191,7 +200,23 @@ static void FreeRtosMainTask(void *argumentPtr)
   }
 #endif /* STM32_THREAD_SAFE_STRATEGY */
 
+#if defined(COMPILATION_WITH_LWIP)
+  STD_PRINTF("MEM_SIZE           : %6" PRIu32 "\n", static_cast<std::uint32_t>(MEM_SIZE));
+  STD_PRINTF("PBUF_POOL_BUFSIZE  : %6" PRIu32 "\n\n", static_cast<std::uint32_t>(PBUF_POOL_BUFSIZE));
+#if LWIP_IPV4 && LWIP_IPV6
+  STD_PRINTF("LWIP_IPV4, LWIP_IPV6\n");
+#endif /* LWIP_IPV4 && LWIP_IPV6 */
+#endif /* COMPILATION_WITH_LWIP) */
+
+#if defined(COMPILATION_WITH_LWIP)
+  tcpip_init(NULL, NULL);
+#endif /* COMPILATION_WITH_LWIP) */
+
   InitializeEmw(emw);
+
+#if defined(COMPILATION_WITH_LWIP)
+  WiFiNetworkCore::InitializeSystem(&emw);
+#endif /* COMPILATION_WITH_LWIP) */
 
   static_cast<void>(xTaskCreate(AppTaskFunction, app_task_function_name, 2224U, argumentPtr, 16U, NULL));
 

@@ -153,7 +153,10 @@ void EmwIoSpi::processPollingDataImp(std::uint32_t timeoutInMs) noexcept
       else {
         std::uint16_t rx_length = 0U;
         if (this->exchangeHeaders(TxDataLength, rx_length) == 0) {
-          if (EmwNetworkStack::GetBufferPayloadSize(network_buffer_ptr) < rx_length) {
+          uint32_t buffer_payload_size;
+          std::uint8_t *const buffer_payload_ptr = EmwNetworkStack::GetBufferPayload(network_buffer_ptr, buffer_payload_size);
+
+          if (rx_length > buffer_payload_size) {
             DEBUG_IO_LOG(" EmwIoSpi::processPollingDataImp(): length: %" PRIu32 "-%" PRIu32 "\n",
                          static_cast<std::uint32_t>(rx_length), static_cast<std::uint32_t>(EmwIoSpi::TxDataLength))
             DRIVER_ERROR_VERBOSE(" SPI length invalid\n")
@@ -168,7 +171,7 @@ void EmwIoSpi::processPollingDataImp(std::uint32_t timeoutInMs) noexcept
               data_length = rx_length;
             }
             if (rx_length > 0U) {
-              rx_data_ptr = EmwNetworkStack::GetBufferPayload(network_buffer_ptr);
+              rx_data_ptr = buffer_payload_ptr;
             }
             if (this->waitFlowHigh() != 0) {
               DRIVER_ERROR_VERBOSE(" Wait FLOW timeout 1\n")

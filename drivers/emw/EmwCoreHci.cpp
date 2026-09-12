@@ -64,10 +64,10 @@ void EmwCoreHci::Initialize(void) noexcept
 void EmwCoreHci::Input(EmwNetworkStack::Buffer_t *networkBufferPtr) noexcept
 {
   if (networkBufferPtr != nullptr) {
-    const std::uint8_t *const buffer_payload_ptr = EmwNetworkStack::GetBufferPayload(networkBufferPtr);
-    const std::uint32_t buffer_payload_size = EmwNetworkStack::GetBufferPayloadSize(networkBufferPtr);
+    std::uint32_t buffer_payload_size;
+    const std::uint8_t *const buffer_payload_ptr = EmwNetworkStack::GetBufferPayload(networkBufferPtr, buffer_payload_size);
 
-    DEBUG_HCI_LOG("\nEmwCoreHci::Input(): %" PRIu32 "\n", buffer_payload_size)
+    DEBUG_HCI_LOG("\n EmwCoreHci::Input(): %" PRIu32 "\n", buffer_payload_size)
 
     if ((buffer_payload_ptr != nullptr) && (buffer_payload_size > 0U)) {
 #if 0
@@ -75,8 +75,8 @@ void EmwCoreHci::Input(EmwNetworkStack::Buffer_t *networkBufferPtr) noexcept
         DEBUG_HCI_LOG("%02" PRIx32 " ", static_cast<std::uint32_t>(*(buffer_payload_ptr + i)))
       }
 #endif /* 0 */
-      if (EmwOsInterface::eOK \
-          != EmwOsInterface::PutMessageQueue(EmwCoreHci::NetworkPacketFifo, networkBufferPtr, EMW_OS_TIMEOUT_FOREVER)) {
+      if (EmwOsInterface::PutMessageQueue(EmwCoreHci::NetworkPacketFifo, networkBufferPtr,
+                                          EMW_OS_TIMEOUT_FOREVER) != EmwOsInterface::eOK) {
         DRIVER_ERROR_VERBOSE("HCI push input queue error!\n")
         EmwNetworkStack::FreeBuffer(networkBufferPtr);
       }

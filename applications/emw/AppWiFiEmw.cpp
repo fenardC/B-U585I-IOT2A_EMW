@@ -17,6 +17,7 @@
   ******************************************************************************
   */
 #include "AppWiFiEmw.hpp"
+#include "AppConsoleDownload.hpp"
 #include "AppConsoleEcho.hpp"
 #include "AppConsolePing.hpp"
 #include "AppConsoleScan.hpp"
@@ -120,10 +121,11 @@ extern "C" {
 
       {
         class AppConsoleEcho echo;
+        class AppConsoleDownload http;
         class AppConsolePing ping;
         class AppConsoleScan scan;
         class AppConsoleStats stats;
-        class Cmd *cmds[] = {&echo, &ping, &scan, &stats, nullptr};
+        class Cmd *cmds[] = {&echo, &http, &ping, &scan, &stats, nullptr};
         class Console the_console("app>", cmds);
 
         the_console.run();

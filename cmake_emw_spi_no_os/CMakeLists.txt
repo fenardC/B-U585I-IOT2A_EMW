@@ -55,6 +55,7 @@ add_executable(${PROJECT_NAME}
   ${APPLICATION_CORE_SRC_PATH}/tim.c
   ${APPLICATION_CORE_SRC_PATH}/usart.c
   ${APPLICATION_CORE_SRC_PATH}/wifi_emw.cpp
+  ${APPLICATION_EMW_SRC_PATH}/AppConsoleDownload.cpp
   ${APPLICATION_EMW_SRC_PATH}/AppConsoleEcho.cpp
   ${APPLICATION_EMW_SRC_PATH}/AppConsolePing.cpp
   ${APPLICATION_EMW_SRC_PATH}/AppConsoleScan.cpp

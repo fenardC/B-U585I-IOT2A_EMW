@@ -22,6 +22,7 @@
 #include "AppConsolePing.hpp"
 #include "AppConsoleScan.hpp"
 #include "AppConsoleStats.hpp"
+#include "AppConsoleTls.hpp"
 #include "EmwAddress.hpp"
 #include "EmwApiEmw.hpp"
 #include "emw_conf.hpp"
@@ -125,7 +126,8 @@ extern "C" {
         class AppConsolePing ping;
         class AppConsoleScan scan;
         class AppConsoleStats stats;
-        class Cmd *cmds[] = {&echo, &http, &ping, &scan, &stats, nullptr};
+        class AppConsoleTls tls;
+        class Cmd *cmds[] = {&echo, &http, &ping, &scan, &stats, &tls, nullptr};
         class Console the_console("app>", cmds);
 
         the_console.run();

@@ -35,6 +35,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>application/AppConsoleDownload.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/applications/emw/AppConsoleDownload.cpp</locationURI>
+		</link>
+		<link>
 			<name>application/AppConsoleEcho.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/applications/emw/AppConsoleEcho.cpp</locationURI>

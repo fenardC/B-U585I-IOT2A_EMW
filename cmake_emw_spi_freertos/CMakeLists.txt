@@ -65,6 +65,7 @@ add_executable(${PROJECT_NAME}
   ${APPLICATION_EMW_SRC_PATH}/AppConsolePing.cpp
   ${APPLICATION_EMW_SRC_PATH}/AppConsoleScan.cpp
   ${APPLICATION_EMW_SRC_PATH}/AppConsoleStats.cpp
+  ${APPLICATION_EMW_SRC_PATH}/AppConsoleTls.cpp
   ${APPLICATION_EMW_SRC_PATH}/AppWiFiEmw.cpp
   ${DRIVER_EMW_SRC_PATH}/EmwAddress.cpp
   ${DRIVER_EMW_SRC_PATH}/EmwApiCore.cpp

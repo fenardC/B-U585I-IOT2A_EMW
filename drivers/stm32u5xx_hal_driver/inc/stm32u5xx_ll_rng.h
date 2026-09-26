@@ -132,6 +132,28 @@ typedef struct {
   * @}
   */
 
+#if (defined(RNG_NSCR_EN_OSC1) || defined(RNG_NSCR_EN_OSC2) ||defined(RNG_NSCR_EN_OSC3))
+/** @defgroup RNG_LL_NSCR_Oscillator_Sources Oscillator Sources Defines
+  * @{
+  */
+#define LL_RNG_OSC_1 RNG_NSCR_EN_OSC1
+#define LL_RNG_OSC_2 RNG_NSCR_EN_OSC2
+#define LL_RNG_OSC_3 RNG_NSCR_EN_OSC3
+/**
+  * @}
+  */
+
+/** @defgroup RNG_LL_NSCR_Noise_Sources_Ports Noise Sources Ports Defines
+  * @{
+  */
+#define LL_RNG_NOISE_SRC_1 (0x01UL)
+#define LL_RNG_NOISE_SRC_2 (0x02UL)
+#define LL_RNG_NOISE_SRC_3 (0x04UL)
+/**
+  * @}
+  */
+
+#endif /* RNG_CR_CONDRST */
 /** @defgroup RNG_LL_EC_IT IT Defines
   * @brief    IT defines which can be used with LL_RNG_ReadReg and  LL_RNG_WriteReg macros
   * @{
@@ -672,6 +694,9 @@ __STATIC_INLINE uint32_t LL_RNG_IsEnabledArdis(const RNG_TypeDef *RNGx)
   */
 __STATIC_INLINE void LL_RNG_SetHealthConfig(RNG_TypeDef *RNGx, uint32_t HTCFG)
 {
+#if defined(RNG_HTCR_NIST_VALUE)
+  /* For NIST compliance we can fin the recommended value in the application note AN4230 */
+#endif /* defined(RNG_HTCR_NIST_VALUE) */
   WRITE_REG(RNGx->HTCR, HTCFG);
 }
 
@@ -689,11 +714,90 @@ __STATIC_INLINE uint32_t LL_RNG_GetHealthConfig(const RNG_TypeDef *RNGx)
 /**
   * @}
   */
+#if defined(RNG_NSCR_NIST_VALUE)
+
+/** @defgroup RNG_LL_EF_Noise_Test_Control Noise Test Control
+  * @{
+  */
+
+/**
+  * @brief  Set RNG Noise Test Control
+  * @rmtoll NSCR NOISECFG LL_RNG_SetNoiseConfig
+  * @param  RNGx RNG Instance
+  * @param  NOISECFG can be values of 32 bits
+  * @retval None
+  */
+__STATIC_INLINE void LL_RNG_SetNoiseConfig(RNG_TypeDef *RNGx, uint32_t NOISECFG)
+{
+  /* For NIST compliance we can fin the recommended value in the application note AN4230 */
+  WRITE_REG(RNGx->NSCR, NOISECFG);
+}
+
+/**
+  * @brief  Get RNG Noise Test Control
+  * @rmtoll NSCR NOISECFG LL_RNG_GetNoiseConfig
+  * @param  RNGx RNG Instance
+  * @retval Return 32-bit RNG Noise Test configuration
+  */
+__STATIC_INLINE uint32_t LL_RNG_GetNoiseConfig(const RNG_TypeDef *RNGx)
+{
+  return (uint32_t)READ_REG(RNGx->NSCR);
+}
+
+/**
+  * @}
+  */
+
+#endif /* defined(RNG_NSCR_NIST_VALUE) */
+#if (defined(RNG_NSCR_EN_OSC1) || defined(RNG_NSCR_EN_OSC2) || defined(RNG_NSCR_EN_OSC3))
+/** @defgroup RNG noise source Control
+  * @{
+  */
+
+/**
+  * @brief  Set RNG Noise Source Configuration.
+  * @rmtoll
+  *  NSCR       NSCR       LL_RNG_GetOscNoiseSrc
+  * @param  RNGx RNG Instance
+  * @param  osc be one of the following values:
+  *         @arg @ref LL_RNG_OSC_1
+  *         @arg @ref LL_RNG_OSC_2
+  *         @arg @ref LL_RNG_OSC_3
+  * @retval can be one of the following values:
+  *         @arg @ref LL_RNG_NOISE_SRC_1
+  *         @arg @ref LL_RNG_NOISE_SRC_2
+  *         @arg @ref LL_RNG_NOISE_SRC_3
+  */
+__STATIC_INLINE void LL_RNG_SetOscNoiseSrc(RNG_TypeDef *RNGx, uint32_t osc)
+{
+  WRITE_REG(RNGx->NSCR, osc);
+}
+
+/**
+  * @brief  Get RNG Noise Source Configuration.
+  * @rmtoll
+  *  NSCR       NSCR       LL_RNG_GetOscNoiseSrc
+  * @param  RNGx RNG Instance
+  * @param  osc be one of the following values:
+  *         @arg @ref LL_RNG_OSC_1
+  *         @arg @ref LL_RNG_OSC_2
+  *         @arg @ref LL_RNG_OSC_3
+  * @retval can be one of the following values:
+  *         @arg @ref LL_RNG_NOISE_SRC_1
+  *         @arg @ref LL_RNG_NOISE_SRC_2
+  *         @arg @ref LL_RNG_NOISE_SRC_3
+  */
+__STATIC_INLINE uint32_t LL_RNG_GetOscNoiseSrc(const RNG_TypeDef *RNGx, uint32_t osc)
+{
+  return (READ_BIT(RNGx->NSCR, osc) >> POSITION_VAL(osc));
+}
+
+#endif /* defined(defined(RNG_NSCR_EN_OSC1) || RNG_NSCR_EN_OSC2 ||RNG_NSCR_EN_OSC3) */
 #if defined(USE_FULL_LL_DRIVER)
 /** @defgroup RNG_LL_EF_Init Initialization and de-initialization functions
   * @{
   */
-ErrorStatus LL_RNG_Init(RNG_TypeDef *RNGx, LL_RNG_InitTypeDef *RNG_InitStruct);
+ErrorStatus LL_RNG_Init(RNG_TypeDef *RNGx, const LL_RNG_InitTypeDef *RNG_InitStruct);
 void LL_RNG_StructInit(LL_RNG_InitTypeDef *RNG_InitStruct);
 ErrorStatus LL_RNG_DeInit(const RNG_TypeDef *RNGx);
 

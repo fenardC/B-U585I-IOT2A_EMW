@@ -118,7 +118,7 @@ typedef enum {
   * @brief  HAL RNG Callback pointer definition
   */
 typedef void (*pRNG_CallbackTypeDef)(RNG_HandleTypeDef
-                                     *hrng); /*!< pointer to a common RNG callback function */
+                                      *hrng); /*!< pointer to a common RNG callback function */
 typedef void (*pRNG_ReadyDataCallbackTypeDef)(RNG_HandleTypeDef *hrng,
     uint32_t random32bit); /*!< pointer to an RNG Data Ready specific callback function */
 
@@ -177,6 +177,7 @@ typedef void (*pRNG_ReadyDataCallbackTypeDef)(RNG_HandleTypeDef *hrng,
 #define  HAL_RNG_ERROR_BUSY             0x00000004U    /*!< Busy error        */
 #define  HAL_RNG_ERROR_SEED             0x00000008U    /*!< Seed error        */
 #define  HAL_RNG_ERROR_CLOCK            0x00000010U    /*!< Clock error       */
+#define  HAL_RNG_ERROR_RECOVERSEED      0x00000020U    /*!< Recover Seed error */
 /**
   * @}
   */
@@ -294,8 +295,8 @@ typedef void (*pRNG_ReadyDataCallbackTypeDef)(RNG_HandleTypeDef *hrng,
   */
 HAL_StatusTypeDef HAL_RNG_Init(RNG_HandleTypeDef *hrng);
 HAL_StatusTypeDef HAL_RNG_DeInit(RNG_HandleTypeDef *hrng);
-void HAL_RNG_MspInit(const RNG_HandleTypeDef *hrng);
-void HAL_RNG_MspDeInit(const RNG_HandleTypeDef *hrng);
+void HAL_RNG_MspInit(RNG_HandleTypeDef *hrng);
+void HAL_RNG_MspDeInit(RNG_HandleTypeDef *hrng);
 
 /* Callbacks Register/UnRegister functions  ***********************************/
 #if (USE_HAL_RNG_REGISTER_CALLBACKS == 1)

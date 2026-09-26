@@ -294,7 +294,7 @@ __STATIC_INLINE void LL_InitTick(uint32_t HCLKFrequency, uint32_t Ticks)
   SysTick->LOAD = (uint32_t)((HCLKFrequency / Ticks) - 1UL); /* set reload register */
   SysTick->VAL = 0UL; /* Load the SysTick Counter Value */
   SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
-                  SysTick_CTRL_ENABLE_Msk; /* Enable the Systick Timer */
+                   SysTick_CTRL_ENABLE_Msk; /* Enable the Systick Timer */
 }
 
 void LL_Init1msTick(uint32_t HCLKFrequency);

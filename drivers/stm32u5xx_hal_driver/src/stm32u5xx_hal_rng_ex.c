@@ -30,7 +30,7 @@
 
 #if defined(RNG)
 
-/** @addtogroup RNG_Ex
+/** @addtogroup RNGEx
   * @brief RNG Extended HAL module driver.
   * @{
   */
@@ -41,7 +41,7 @@
 /* Private defines -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private constants ---------------------------------------------------------*/
-/** @addtogroup RNG_Ex_Private_Constants
+/** @addtogroup RNGEx_Private_Constants
   * @{
   */
 #define RNG_TIMEOUT_VALUE     2U
@@ -53,11 +53,11 @@
 /* Private functions  --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 
-/** @defgroup RNG_Ex_Exported_Functions RNG_Ex Exported Functions
+/** @defgroup RNGEx_Exported_Functions RNGEx Exported Functions
   * @{
   */
 
-/** @defgroup RNG_Ex_Exported_Functions_Group1 Configuration and lock functions
+/** @defgroup RNGEx_Exported_Functions_Group1 Configuration and lock functions
   *  @brief   Configuration functions
   *
 @verbatim
@@ -153,6 +153,13 @@ HAL_StatusTypeDef HAL_RNGEx_SetConfig(RNG_HandleTypeDef *hrng, const RNG_ConfigT
     /* Initialize the RNG state */
     hrng->State = HAL_RNG_STATE_READY;
 
+    /*Check if seed error current status (SECS)is set */
+    if (__HAL_RNG_GET_FLAG(hrng, RNG_SR_SECS) != RESET) {
+      /* Update the error code */
+      hrng->ErrorCode = HAL_RNG_ERROR_SEED;
+      return HAL_ERROR;
+    }
+
     /* function status */
     status = HAL_OK;
   } else {
@@ -197,6 +204,7 @@ HAL_StatusTypeDef HAL_RNGEx_GetConfig(RNG_HandleTypeDef *hrng, RNG_ConfigTypeDef
     pConf->NistCompliance = (hrng->Instance->CR & RNG_CR_NISTC);
     pConf->AutoReset = (hrng->Instance->CR & RNG_CR_ARDIS);
     pConf->HealthTest = (hrng->Instance->HTCR);
+    pConf->NoiseSource = (hrng->Instance->NSCR);
 
     /* Initialize the RNG state */
     hrng->State = HAL_RNG_STATE_READY;
@@ -256,7 +264,7 @@ HAL_StatusTypeDef HAL_RNGEx_LockConfig(RNG_HandleTypeDef *hrng)
   * @}
   */
 
-/** @defgroup RNG_Ex_Exported_Functions_Group2 Recover from seed error function
+/** @defgroup RNGEx_Exported_Functions_Group2 Recover from seed error function
   *  @brief   Recover from seed error function
   *
 @verbatim
@@ -278,19 +286,27 @@ HAL_StatusTypeDef HAL_RNGEx_LockConfig(RNG_HandleTypeDef *hrng)
 HAL_StatusTypeDef HAL_RNGEx_RecoverSeedError(RNG_HandleTypeDef *hrng)
 {
   HAL_StatusTypeDef status;
+  HAL_RNG_StateTypeDef state;
 
   /* Check the RNG handle allocation */
   if (hrng == NULL) {
     return HAL_ERROR;
   }
 
+  state = hrng->State;
+
   /* Check RNG peripheral state */
-  if (hrng->State == HAL_RNG_STATE_READY) {
+  if ((state == HAL_RNG_STATE_READY) || (state == HAL_RNG_STATE_ERROR)) {
     /* Change RNG peripheral state */
     hrng->State = HAL_RNG_STATE_BUSY;
 
     /* sequence to fully recover from a seed error */
     status = RNG_RecoverSeedError(hrng);
+
+    if (status == HAL_ERROR) {
+      /* Update the error code */
+      hrng->ErrorCode = HAL_RNG_ERROR_RECOVERSEED;
+    }
   } else {
     hrng->ErrorCode = HAL_RNG_ERROR_BUSY;
     status = HAL_ERROR;

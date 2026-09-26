@@ -1074,6 +1074,8 @@ uint32_t HAL_SPI_GetError(const SPI_HandleTypeDef *hspi);
                                                     ((LENGTH) == SPI_CRC_LENGTH_5BIT)     || \
                                                     ((LENGTH) == SPI_CRC_LENGTH_4BIT))
 
+#define IS_SPI_LIMITED_TRANSFER_SIZE(SIZE)         (((SIZE) < 0x3FFU) && ((SIZE) != 0U))
+
 /**
   * @brief  CRC Length for limited instance
   */
@@ -1081,6 +1083,8 @@ uint32_t HAL_SPI_GetError(const SPI_HandleTypeDef *hspi);
                                                     ((LENGTH) == SPI_CRC_LENGTH_16BIT))
 
 #define IS_SPI_CRC_POLYNOMIAL(POLYNOMIAL)          ((POLYNOMIAL) > 0x0UL)
+
+#define IS_SPI_CRC_POLYNOMIAL_SIZE(POLYNOM, LENGTH) (((POLYNOM) >> (((LENGTH) >> SPI_CFG1_CRCSIZE_Pos) + 1UL)) == 0UL)
 
 #define IS_SPI_UNDERRUN_BEHAVIOUR(MODE)            (((MODE) == SPI_UNDERRUN_BEHAV_REGISTER_PATTERN) || \
                                                     ((MODE) == SPI_UNDERRUN_BEHAV_LAST_RECEIVED))
@@ -1093,6 +1097,8 @@ uint32_t HAL_SPI_GetError(const SPI_HandleTypeDef *hspi);
 
 #define IS_SPI_MASTER_RX_AUTOSUSP(MODE)            (((MODE) == SPI_MASTER_RX_AUTOSUSP_DISABLE) || \
                                                     ((MODE) == SPI_MASTER_RX_AUTOSUSP_ENABLE))
+
+#define IS_SPI_TRANSFER_SIZE(SIZE)                 (((SIZE) < 0xFFFFU) && ((SIZE) != 0U))
 /**
   * @}
   */

@@ -841,7 +841,7 @@ void HAL_PWREx_S3WU_IRQHandler(uint32_t WakeUpPin)
       SET_BIT(PWR->WUSCR, PWR_WUSCR_CWUF1);
 
       /* PWR S3WU interrupt user callback */
-      HAL_PWREx_S3WUCallback(WakeUpPin);
+      HAL_PWREx_S3WUCallback(PWR_WAKEUP_PIN1);
     }
   }
 
@@ -852,7 +852,7 @@ void HAL_PWREx_S3WU_IRQHandler(uint32_t WakeUpPin)
       SET_BIT(PWR->WUSCR, PWR_WUSCR_CWUF2);
 
       /* PWR S3WU interrupt user callback */
-      HAL_PWREx_S3WUCallback(WakeUpPin);
+      HAL_PWREx_S3WUCallback(PWR_WAKEUP_PIN2);
     }
   }
 
@@ -863,7 +863,7 @@ void HAL_PWREx_S3WU_IRQHandler(uint32_t WakeUpPin)
       SET_BIT(PWR->WUSCR, PWR_WUSCR_CWUF3);
 
       /* PWR S3WU interrupt user callback */
-      HAL_PWREx_S3WUCallback(WakeUpPin);
+      HAL_PWREx_S3WUCallback(PWR_WAKEUP_PIN3);
     }
   }
 
@@ -874,7 +874,7 @@ void HAL_PWREx_S3WU_IRQHandler(uint32_t WakeUpPin)
       SET_BIT(PWR->WUSCR, PWR_WUSCR_CWUF4);
 
       /* PWR S3WU interrupt user callback */
-      HAL_PWREx_S3WUCallback(WakeUpPin);
+      HAL_PWREx_S3WUCallback(PWR_WAKEUP_PIN4);
     }
   }
 
@@ -885,7 +885,7 @@ void HAL_PWREx_S3WU_IRQHandler(uint32_t WakeUpPin)
       SET_BIT(PWR->WUSCR, PWR_WUSCR_CWUF5);
 
       /* PWR S3WU interrupt user callback */
-      HAL_PWREx_S3WUCallback(WakeUpPin);
+      HAL_PWREx_S3WUCallback(PWR_WAKEUP_PIN5);
     }
   }
 
@@ -896,7 +896,7 @@ void HAL_PWREx_S3WU_IRQHandler(uint32_t WakeUpPin)
       SET_BIT(PWR->WUSCR, PWR_WUSCR_CWUF6);
 
       /* PWR S3WU interrupt user callback */
-      HAL_PWREx_S3WUCallback(WakeUpPin);
+      HAL_PWREx_S3WUCallback(PWR_WAKEUP_PIN6);
     }
   }
 
@@ -907,7 +907,7 @@ void HAL_PWREx_S3WU_IRQHandler(uint32_t WakeUpPin)
       SET_BIT(PWR->WUSCR, PWR_WUSCR_CWUF7);
 
       /* PWR S3WU interrupt user callback */
-      HAL_PWREx_S3WUCallback(WakeUpPin);
+      HAL_PWREx_S3WUCallback(PWR_WAKEUP_PIN7);
     }
   }
 
@@ -918,7 +918,7 @@ void HAL_PWREx_S3WU_IRQHandler(uint32_t WakeUpPin)
       SET_BIT(PWR->WUSCR, PWR_WUSCR_CWUF8);
 
       /* PWR S3WU interrupt user callback */
-      HAL_PWREx_S3WUCallback(WakeUpPin);
+      HAL_PWREx_S3WUCallback(PWR_WAKEUP_PIN8);
     }
   }
 }

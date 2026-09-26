@@ -566,7 +566,7 @@ HAL_StatusTypeDef HAL_ICACHE_EnableRemapRegion(uint32_t Region, const ICACHE_Reg
       /* Region 64MB:  BaseAddress size 3 bits, RemapAddress size 6 bits  */
       /* Region 128MB: BaseAddress size 2 bits, RemapAddress size 5 bits  */
       value = ((pRegionConfig->BaseAddress & 0x1FFFFFFFU) >> 21U) & \
-              (0xFFU & ~(pRegionConfig->Size - 1U));
+               (0xFFU & ~(pRegionConfig->Size - 1U));
       value |= ((pRegionConfig->RemapAddress >> 5U) & \
                 ((uint32_t)(0x7FFU & ~(pRegionConfig->Size - 1U)) << ICACHE_CRRx_REMAPADDR_Pos));
       value |= (pRegionConfig->Size << ICACHE_CRRx_RSIZE_Pos) | pRegionConfig->TrafficRoute | \

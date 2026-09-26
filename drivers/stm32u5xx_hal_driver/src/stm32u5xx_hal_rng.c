@@ -199,8 +199,20 @@ HAL_StatusTypeDef HAL_RNG_Init(RNG_HandleTypeDef *hrng)
   /* Disable RNG */
   __HAL_RNG_DISABLE(hrng);
 
+#if defined(RNG_CR_NIST_VALUE)
+  /* Recommended value for NIST compliance, refer to application note AN4230 */
+  WRITE_REG(hrng->Instance->CR, RNG_CR_NIST_VALUE | RNG_CR_CONDRST | hrng->Init.ClockErrorDetection);
+#else
   /* Clock Error Detection Configuration when CONDRT bit is set to 1 */
   MODIFY_REG(hrng->Instance->CR, RNG_CR_CED | RNG_CR_CONDRST, hrng->Init.ClockErrorDetection | RNG_CR_CONDRST);
+#endif /* RNG_CR_NIST_VALUE */
+#if defined(RNG_HTCR_NIST_VALUE)
+  /* Recommended value for NIST compliance, refer to application note AN4230 */
+  WRITE_REG(hrng->Instance->HTCR, RNG_HTCR_NIST_VALUE);
+#endif /* RNG_HTCR_NIST_VALUE */
+#if defined(RNG_NSCR_NIST_VALUE)
+  WRITE_REG(hrng->Instance->NSCR, RNG_NSCR_NIST_VALUE);
+#endif /* RNG_NSCR_NIST_VALUE */
 
   /* Writing bit CONDRST=0 */
   CLEAR_BIT(hrng->Instance->CR, RNG_CR_CONDRST);
@@ -236,7 +248,7 @@ HAL_StatusTypeDef HAL_RNG_Init(RNG_HandleTypeDef *hrng)
   while (__HAL_RNG_GET_FLAG(hrng, RNG_FLAG_DRDY) != SET) {
     if ((HAL_GetTick() - tickstart) > RNG_TIMEOUT_VALUE) {
       /* New check to avoid false timeout detection in case of preemption */
-      if (__HAL_RNG_GET_FLAG(hrng, RNG_FLAG_SECS) != RESET) {
+      if (__HAL_RNG_GET_FLAG(hrng, RNG_FLAG_DRDY) != SET) {
         hrng->State = HAL_RNG_STATE_ERROR;
         hrng->ErrorCode = HAL_RNG_ERROR_TIMEOUT;
         return HAL_ERROR;
@@ -330,7 +342,7 @@ HAL_StatusTypeDef HAL_RNG_DeInit(RNG_HandleTypeDef *hrng)
   *                the configuration information for RNG.
   * @retval None
   */
-__weak void HAL_RNG_MspInit(const RNG_HandleTypeDef *hrng)
+__weak void HAL_RNG_MspInit(RNG_HandleTypeDef *hrng)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hrng);
@@ -345,7 +357,7 @@ __weak void HAL_RNG_MspInit(const RNG_HandleTypeDef *hrng)
   *                the configuration information for RNG.
   * @retval None
   */
-__weak void HAL_RNG_MspDeInit(const RNG_HandleTypeDef *hrng)
+__weak void HAL_RNG_MspDeInit(RNG_HandleTypeDef *hrng)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hrng);
@@ -604,13 +616,15 @@ HAL_StatusTypeDef HAL_RNG_GenerateRandomNumber(RNG_HandleTypeDef *hrng, uint32_t
     hrng->State = HAL_RNG_STATE_BUSY;
 
     /* Check if there is a seed error */
-    if (__HAL_RNG_GET_IT(hrng, RNG_IT_SEI) != RESET) {
+    if (__HAL_RNG_GET_FLAG(hrng, RNG_FLAG_SECS) != RESET) {
       /* Update the error code */
       hrng->ErrorCode = HAL_RNG_ERROR_SEED;
       /* Reset from seed error */
       status = RNG_RecoverSeedError(hrng);
 
       if (status == HAL_ERROR) {
+        /* Update the error code */
+        hrng->ErrorCode = HAL_RNG_ERROR_RECOVERSEED;
         return status;
       }
     }
@@ -620,6 +634,13 @@ HAL_StatusTypeDef HAL_RNG_GenerateRandomNumber(RNG_HandleTypeDef *hrng, uint32_t
 
     /* Check if data register contains valid random data */
     while (__HAL_RNG_GET_FLAG(hrng, RNG_FLAG_DRDY) == RESET) {
+      if (__HAL_RNG_GET_FLAG(hrng, RNG_FLAG_SECS) != RESET) {
+        /* Update the error code */
+        hrng->ErrorCode = HAL_RNG_ERROR_RECOVERSEED;
+        hrng->State = HAL_RNG_STATE_READY;
+        return HAL_ERROR;
+      }
+
       if ((HAL_GetTick() - tickstart) > RNG_TIMEOUT_VALUE) {
         /* New check to avoid false timeout detection in case of preemption */
         if (__HAL_RNG_GET_FLAG(hrng, RNG_FLAG_DRDY) == RESET) {

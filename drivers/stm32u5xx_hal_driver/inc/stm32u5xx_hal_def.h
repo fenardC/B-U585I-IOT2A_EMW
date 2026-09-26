@@ -172,7 +172,7 @@ typedef enum {
 /**
   * @brief  __RAM_FUNC definition
   */
-#if defined ( __CC_ARM   ) || ((__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050))
+#if defined ( __CC_ARM   ) || (defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050))
 
 /* ARM Compiler
    ------------
@@ -205,7 +205,7 @@ typedef enum {
 /**
   * @brief  __NOINLINE definition
   */
-#if defined ( __CC_ARM   ) || ((__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)) || defined   (  __GNUC__  )
+#if defined ( __CC_ARM   ) || (defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)) || defined   (  __GNUC__  )
 /* ARM & GNUCompiler
    ----------------
 */

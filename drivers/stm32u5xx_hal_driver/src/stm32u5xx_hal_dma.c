@@ -273,6 +273,16 @@ HAL_StatusTypeDef HAL_DMA_Init(DMA_HandleTypeDef *const hdma)
   /* Allocate lock resource */
   __HAL_UNLOCK(hdma);
 
+  /* Initialize the callbacks */
+  if (hdma->State == HAL_DMA_STATE_RESET) {
+    /* Clean all callbacks */
+    hdma->XferCpltCallback = NULL;
+    hdma->XferHalfCpltCallback = NULL;
+    hdma->XferErrorCallback = NULL;
+    hdma->XferAbortCallback = NULL;
+    hdma->XferSuspendCallback = NULL;
+  }
+
   /* Update the DMA channel state */
   hdma->State = HAL_DMA_STATE_BUSY;
 
@@ -858,7 +868,7 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *const hdma)
   }
 
   /* Data Transfer Error Interrupt management *************************************************************************/
-  if ((__HAL_DMA_GET_FLAG(hdma, DMA_FLAG_DTE) != 0U)) {
+  if (__HAL_DMA_GET_FLAG(hdma, DMA_FLAG_DTE) != 0U) {
     /* Check if interrupt source is enabled */
     if (__HAL_DMA_GET_IT_SOURCE(hdma, DMA_IT_DTE) != 0U) {
       /* Clear the transfer error flag */
@@ -870,7 +880,7 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *const hdma)
   }
 
   /* Update Linked-list Error Interrupt management ********************************************************************/
-  if ((__HAL_DMA_GET_FLAG(hdma, DMA_FLAG_ULE) != 0U)) {
+  if (__HAL_DMA_GET_FLAG(hdma, DMA_FLAG_ULE) != 0U) {
     /* Check if interrupt source is enabled */
     if (__HAL_DMA_GET_IT_SOURCE(hdma, DMA_IT_ULE) != 0U) {
       /* Clear the update linked-list error flag */
@@ -882,7 +892,7 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *const hdma)
   }
 
   /* User Setting Error Interrupt management **************************************************************************/
-  if ((__HAL_DMA_GET_FLAG(hdma, DMA_FLAG_USE) != 0U)) {
+  if (__HAL_DMA_GET_FLAG(hdma, DMA_FLAG_USE) != 0U) {
     /* Check if interrupt source is enabled */
     if (__HAL_DMA_GET_IT_SOURCE(hdma, DMA_IT_USE) != 0U) {
       /* Clear the user setting error flag */
@@ -894,7 +904,7 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *const hdma)
   }
 
   /* Trigger Overrun Interrupt management *****************************************************************************/
-  if ((__HAL_DMA_GET_FLAG(hdma, DMA_FLAG_TO) != 0U)) {
+  if (__HAL_DMA_GET_FLAG(hdma, DMA_FLAG_TO) != 0U) {
     /* Check if interrupt source is enabled */
     if (__HAL_DMA_GET_IT_SOURCE(hdma, DMA_IT_TO) != 0U) {
       /* Clear the trigger overrun flag */
@@ -906,7 +916,7 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *const hdma)
   }
 
   /* Half Transfer Complete Interrupt management **********************************************************************/
-  if ((__HAL_DMA_GET_FLAG(hdma, DMA_FLAG_HT) != 0U)) {
+  if (__HAL_DMA_GET_FLAG(hdma, DMA_FLAG_HT) != 0U) {
     /* Check if interrupt source is enabled */
     if (__HAL_DMA_GET_IT_SOURCE(hdma, DMA_IT_HT) != 0U) {
       /* Clear the half transfer flag */
@@ -921,7 +931,7 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *const hdma)
   }
 
   /* Suspend Transfer Interrupt management ****************************************************************************/
-  if ((__HAL_DMA_GET_FLAG(hdma, DMA_FLAG_SUSP) != 0U)) {
+  if (__HAL_DMA_GET_FLAG(hdma, DMA_FLAG_SUSP) != 0U) {
     /* Check if interrupt source is enabled */
     if (__HAL_DMA_GET_IT_SOURCE(hdma, DMA_IT_SUSP) != 0U) {
       /* Clear the block transfer complete flag */
@@ -971,7 +981,7 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *const hdma)
   }
 
   /* Transfer Complete Interrupt management ***************************************************************************/
-  if ((__HAL_DMA_GET_FLAG(hdma, DMA_FLAG_TC) != 0U)) {
+  if (__HAL_DMA_GET_FLAG(hdma, DMA_FLAG_TC) != 0U) {
     /* Check if interrupt source is enabled */
     if (__HAL_DMA_GET_IT_SOURCE(hdma, DMA_IT_TC) != 0U) {
       /* Check DMA channel transfer mode */
@@ -1415,7 +1425,7 @@ HAL_StatusTypeDef HAL_DMA_LockChannelAttributes(DMA_HandleTypeDef const *const h
   */
 HAL_StatusTypeDef HAL_DMA_GetLockChannelAttributes(DMA_HandleTypeDef const *const hdma, uint32_t *const pLockState)
 {
-  DMA_TypeDef *p_dma_instance;
+  const DMA_TypeDef *p_dma_instance;
   uint32_t channel_idx;
 
   /* Check the DMA peripheral handle and lock state parameters */

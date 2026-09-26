@@ -39,6 +39,10 @@
       (#) Flash Memory Erase functions:
            (++) Lock and Unlock the FLASH interface using HAL_FLASH_Unlock() and
                 HAL_FLASH_Lock() functions
+         (++) Lock and unlock the non-secure FLASH control registers using
+           HAL_FLASH_Unlock_NS() and HAL_FLASH_Lock_NS() functions in secure context
+         (++) Lock and unlock the secure FLASH control registers using
+           HAL_FLASH_Unlock_S() and HAL_FLASH_Lock_S() functions in secure context
            (++) Erase function: page Erase and Bank/Mass Erase
            (++) There are two modes of erase :
              (+++) Polling Mode using HAL_FLASHEx_Erase()
@@ -123,22 +127,22 @@
   */
 static void FLASH_MassErase(uint32_t Banks);
 static void FLASH_OB_WRPConfig(uint32_t WRPArea, uint32_t WRPStartOffset, uint32_t WRPEndOffset,
-                               FunctionalState WRPLock);
+    FunctionalState WRPLock);
 static void FLASH_OB_RDPConfig(uint32_t RDPLevel);
 static void FLASH_OB_UserConfig(uint32_t UserType, uint32_t UserConfig);
 #if defined (__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3U)
 static void FLASH_OB_WMSECConfig(uint32_t WMSecConfig, uint32_t WMSecStartPage, uint32_t WMSecEndPage,
-                                 uint32_t WMHDPEndPage);
+    uint32_t WMHDPEndPage);
 static void FLASH_OB_BootLockConfig(uint32_t BootLockConfig);
 #endif /* __ARM_FEATURE_CMSE */
 static void FLASH_OB_BootAddrConfig(uint32_t BootAddrConfig, uint32_t BootAddr);
 static void FLASH_OB_GetWRP(uint32_t WRPArea, uint32_t *WRPStartOffset, uint32_t *WRPEndOffset,
-                            FunctionalState *WRPLock);
+    FunctionalState *WRPLock);
 static uint32_t FLASH_OB_GetRDP(void);
 static uint32_t FLASH_OB_GetUser(void);
 #if defined (__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3U)
 static void FLASH_OB_GetWMSEC(uint32_t *WMSecConfig, uint32_t *WMSecStartPage, uint32_t *WMSecEndPage,
-                              uint32_t *WMHDPEndPage);
+    uint32_t *WMHDPEndPage);
 static uint32_t FLASH_OB_GetBootLock(void);
 #endif /* __ARM_FEATURE_CMSE */
 static void FLASH_OB_GetBootAddr(uint32_t BootAddrConfig, uint32_t *BootAddr);
@@ -1438,12 +1442,12 @@ static uint32_t FLASH_OB_GetRDP(void)
   *         @ref FLASH_OB_USER_nRST_SHUTDOWN, @ref FLASH_OB_USER_SRAM_RST,
   *         @ref FLASH_OB_USER_IWDG_SW, @ref FLASH_OB_USER_IWDG_STOP,
   *         @ref FLASH_OB_USER_IWDG_STANDBY, @ref FLASH_OB_USER_WWDG_SW,
-  *         @ref OB_USER_SWAP_BANK, @ref FLASH_OB_USER_DUALBANK,
+  *         @ref FLASH_OB_USER_SWAP_BANK, @ref FLASH_OB_USER_DUALBANK,
   *         @ref FLASH_OB_USER_BKPRAM_RST, @ref FLASH_OB_USER_SRAM3_ECC,
   *         @ref FLASH_OB_USER_SRAM2_ECC, @ref FLASH_OB_USER_SRAM2_RST,
   *         @ref FLASH_OB_USER_nSWBOOT0, @ref FLASH_OB_USER_nBOOT0,
   *         @ref FLASH_OB_USER_PA15_PUPEN, @ref FLASH_OB_USER_IO_VDD_HSLV,
-  *         @ref FLASH_OB_USER_IO_VDDIO2_HSLV and @ref OB_USER_TZEN
+  *         @ref FLASH_OB_USER_IO_VDDIO2_HSLV and @ref FLASH_OB_USER_TZEN
   */
 static uint32_t FLASH_OB_GetUser(void)
 {

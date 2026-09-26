@@ -380,7 +380,7 @@ HAL_StatusTypeDef HAL_EXTI_ClearConfigLine(const EXTI_HandleTypeDef *hexti)
 }
 
 /**
-  * @brief  Register callback for a dedicated Exti line.
+  * @brief  Register callback for a dedicaated Exti line.
   * @param  hexti Exti handle.
   * @param  CallbackID User callback identifier.
   *         This parameter can be one of @arg @ref EXTI_CallbackIDTypeDef values.

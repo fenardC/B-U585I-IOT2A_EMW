@@ -32,5 +32,5 @@ class EmwApiEmwBypass final : public EmwApiCore {
   public:
     EmwApiBase::Status setByPass(std::int32_t enable, EmwApiBase::NetlinkInputCallback_t netlinkInputCallback) noexcept;
   public:
-    EmwApiBase::Status output(std::uint8_t *dataPtr, std::uint16_t dataLength, std::uint32_t interface) const noexcept;
+    EmwApiBase::Status output(std::uint8_t *dataPtr, std::uint16_t dataLength, std::uint32_t interface) noexcept;
 };

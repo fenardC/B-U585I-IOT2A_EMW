@@ -18,6 +18,7 @@
   */
 #include "emw_conf.hpp"
 #include "EmwApiEmw.hpp"
+#include "EmwCoreIpc.hpp"
 #include <cstdint>
 #include <cinttypes>
 #include <cstring>
@@ -64,9 +65,9 @@ std::int32_t EmwApiEmw::socketClose(std::int32_t socketFd) noexcept
 
     status = -1;
     command_data.closeParams.filedes = socketFd;
-    if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
-                            BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                            EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+    if (this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
+                                    BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                    EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
       if (response_buffer.status == 0) {
         status = 0;
       }
@@ -85,9 +86,9 @@ std::int32_t EmwApiEmw::socketCreate(std::int32_t domain, std::int32_t type, std
 
   DEBUG_API_LOG("\n EmwApiEmw::socketCreate()>\n")
 
-  if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
-                          BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                          EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+  if (this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
+                                  BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                  EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
     ret_fd = response_buffer.fd;
   }
   DEBUG_API_LOG(" EmwApiEmw::socketCreate()< %" PRIi32 "\n\n", ret_fd)
@@ -122,9 +123,9 @@ std::int32_t EmwApiEmw::socketConnect(std::int32_t socketFd,
 
       command_data.connectParams.socket = socketFd;
       command_data.connectParams.length = static_cast<EmwAddress::SockLen_t>(socketAddressSize);
-      if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
-                              BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                              EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+      if (this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
+                                      BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                      EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
         if (response_buffer.status == 0) {
           status = 0;
         }
@@ -151,9 +152,9 @@ std::int32_t EmwApiEmw::socketGetAddrInfo(const char (&nodeNameString)[255], con
   STRING_COPY_TO_ARRAY_CHAR(command_data.getAddrInfoParams.serviceName, serviceNameString);
   command_data.getAddrInfoParams.hints = hints;
 
-  if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
-                          BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                          EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+  if (this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
+                                  BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                  EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
     if (response_buffer.status == 0) {
       result.flags = response_buffer.res.flags;
       result.family = response_buffer.res.family;
@@ -194,9 +195,9 @@ std::int32_t EmwApiEmw::socketGetHostByName(EmwAddress::SockAddr_t &socketAddres
 
     status = -1;
     STRING_COPY_TO_ARRAY_CHAR(command_data.getHostByNameParams.name, nameString);
-    if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
-                            BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                            EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+    if (this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
+                                    BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                    EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
       if (response_buffer.status == 0) {
         /* Only for IPv4 address. */
         EmwAddress::SockAddrIn_t &socket_address_in = reinterpret_cast<EmwAddress::SockAddrIn_t &>(socketAddress);
@@ -224,9 +225,9 @@ std::int32_t EmwApiEmw::socketGetSockOpt(std::int32_t socketFd, std::int32_t lev
     std::uint16_t response_buffer_size = sizeof(response_buffer);
 
     status = -1;
-    if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
-                            BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                            EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+    if (this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
+                                    BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                    EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
       if (response_buffer.status == 0) {
         optionLength = (response_buffer.length > optionLength) ? optionLength : response_buffer.length;
         static_cast<void>(std::memcpy(optionValuePtr, &response_buffer.value[0], optionLength));
@@ -283,9 +284,9 @@ std::int32_t EmwApiEmw::socketSend(std::int32_t socketFd, const std::uint8_t (&d
       static_cast<void>(std::memcpy(&command_data_ptr->sendParams.buffer[0], data, data_length));
       command_data_ptr->sendParams.size = data_length;
       command_data_ptr->sendParams.flags = flags;
-      if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(command_data_ptr.get()), command_data_size,
-                              BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                              EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+      if (this->::EmwCoreIpc::request(BYTES_REF_CAST(command_data_ptr.get()), command_data_size,
+                                      BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                      EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
         status = response_buffer.sent;
       }
     }
@@ -314,9 +315,9 @@ std::int32_t EmwApiEmw::socketSetSockOpt(std::int32_t socketFd, std::int32_t lev
     static_cast<void>(std::memcpy(&command_data.setSockOptParams.value[0], optionValuePtr,
                                   command_data.setSockOptParams.length));
 
-    if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
-                            BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                            EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+    if (this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
+                                    BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                    EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
       if (response_buffer.status == 0) {
         status = 0;
       }
@@ -338,9 +339,9 @@ std::int32_t EmwApiEmw::socketShutDown(std::int32_t socketFd, std::int32_t mode)
     std::uint16_t response_buffer_size = sizeof(response_buffer);
 
     status = -1;
-    if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
-                            BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                            EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+    if (this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
+                                    BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                    EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
       if (response_buffer.status == 0) {
         status = 0;
       }
@@ -374,9 +375,9 @@ std::int32_t EmwApiEmw::socketReceive(std::int32_t socketFd, std::uint8_t (&buff
       EmwCoreIpc::IpcSocketReceiveParams_t command_data(socketFd, data_length, flags);
 
       response_buffer_ptr->received = 0;
-      if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
-                              BYTES_REF_CAST(response_buffer_ptr.get()), response_buffer_size,
-                              EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+      if (this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
+                                      BYTES_REF_CAST(response_buffer_ptr.get()), response_buffer_size,
+                                      EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
         if (response_buffer_ptr->received > 0) {
           const std::size_t received_length = static_cast<std::size_t>(response_buffer_ptr->received);
 
@@ -402,9 +403,9 @@ std::int32_t EmwApiEmw::tlsSetVersion(EmwApiEmw::TlsVersion version) noexcept
 
   DEBUG_API_LOG("\n EmwApiEmw::tlsSetVersion()>\n")
 
-  if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
-                          BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                          EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+  if (this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
+                                  BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                  EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
     if (response_buffer.status == 0) {
       status = 0;
     }
@@ -440,9 +441,9 @@ std::int32_t EmwApiEmw::tlsSetClientCertificate(const std::uint8_t (&certificate
     static_cast<void>(std::memcpy(&command_data_ptr->setClientCertificateParams.certificateData[0], certificate,
                                   certificateLength));
 
-    if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(command_data_ptr.get()), command_ipc_data_size,
-                            BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                            EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+    if (this->::EmwCoreIpc::request(BYTES_REF_CAST(command_data_ptr.get()), command_ipc_data_size,
+                                    BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                    EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
       if (response_buffer.status == 0) {
         status = 0;
       }
@@ -481,9 +482,9 @@ std::int32_t EmwApiEmw::tlsSetClientPrivateKey(const std::uint8_t (&privateKey)[
     static_cast<void>(std::memcpy(&command_data_ptr->setClientCertificateParams.certificateData[0],
                                   privateKey, privateKeyLength));
 
-    if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(command_data_ptr.get()), command_ipc_data_size,
-                            BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                            EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+    if (this->::EmwCoreIpc::request(BYTES_REF_CAST(command_data_ptr.get()), command_ipc_data_size,
+                                    BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                    EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
       if (response_buffer.status == 0) {
         status = EmwApiBase::eEMW_STATUS_OK;
       }
@@ -551,9 +552,9 @@ std::uint32_t EmwApiEmw::tlsConnectSni(const char (&serverNameInformationString)
       command_data_ptr->connectSniParams.caLength = caStringLength;
       static_cast<void>(std::memcpy(&command_data_ptr->connectSniParams.ca[0], caString, caStringLength));
     }
-    if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(command_data_ptr.get()), command_ipc_data_size,
-                            BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                            EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+    if (this->::EmwCoreIpc::request(BYTES_REF_CAST(command_data_ptr.get()), command_ipc_data_size,
+                                    BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                    EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
       if (response_buffer.tlsKey == 0U) {
         tls_key = 0U;
         DEBUG_API_LOG(" EmwApiEmw::tlsConnectSni(): errno: %" PRIi32 "\n\n", response_buffer.emwErrno)
@@ -602,9 +603,9 @@ std::int32_t EmwApiEmw::tlsSend(EmwApiBase::Mtls_t tlsKey, const std::uint8_t (&
       static_cast<void>(std::memcpy(&command_data_ptr->sendParams.buffer[0], data, data_length));
       command_data_ptr->sendParams.size = data_length;
 
-      if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(command_data_ptr.get()), command_ipc_data_size,
-                              BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                              EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+      if (this->::EmwCoreIpc::request(BYTES_REF_CAST(command_data_ptr.get()), command_ipc_data_size,
+                                      BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                      EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
         status = response_buffer.sent;
       }
     }
@@ -643,9 +644,9 @@ std::int32_t EmwApiEmw::tlsReceive(EmwApiBase::Mtls_t tlsPtr, std::uint8_t (&dat
       response_buffer_ptr->received = 0;
       command_data.receiveParams.size = dataLength;
 
-      if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
-                              BYTES_REF_CAST(response_buffer_ptr.get()), response_buffer_size,
-                              EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+      if (this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
+                                      BYTES_REF_CAST(response_buffer_ptr.get()), response_buffer_size,
+                                      EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
         if (response_buffer_ptr->received > 0) {
           const std::size_t received_length = response_buffer_ptr->received;
           if (received_length <= data_length) {
@@ -675,9 +676,9 @@ std::int32_t EmwApiEmw::tlsClose(EmwApiBase::Mtls_t tlsPtr) noexcept
     EmwCoreIpc::TlsCloseResponseParams_t response_buffer;
     std::uint16_t response_buffer_size = sizeof(response_buffer);
 
-    if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
-                            BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                            EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+    if (this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
+                                    BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                    EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
       if (response_buffer.status == 0) {
         status = 0;
       }
@@ -702,9 +703,9 @@ std::int32_t EmwApiEmw::tlsSetNonBlocking(EmwApiBase::Mtls_t tlsPtr, std::int32_
     EmwCoreIpc::TlsSetNonblockResponseParams_t response_buffer;
     std::uint16_t response_buffer_size = sizeof(response_buffer);
 
-    if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
-                            BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                            EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+    if (this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
+                                    BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                    EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
       if (response_buffer.status == 0) {
         status = 0;
       }
@@ -734,9 +735,9 @@ std::int32_t EmwApiEmw::doSocketPing(std::uint16_t apiId,
     command_data.pingParams.count = (count <= count_max) ? count : count_max;
     command_data.pingParams.delayInMs = delayInMs;
     response_buffer.numberOf = 0;
-    if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
-                            BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                            EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+    if (this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
+                                    BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                    EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
       if (response_buffer.numberOf > 0) {
         for (int32_t i = 0; i < response_buffer.numberOf; i++) {
           responses[i] = response_buffer.delaysInMs[i];

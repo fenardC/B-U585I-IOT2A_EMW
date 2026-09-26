@@ -52,14 +52,14 @@ EmwApiBase::Status EmwApiEmwBypass::setByPass(std::int32_t enable,
 
   command_data.bypassSetParams.mode = enable;
   if ((netlinkInputCallback != nullptr) && (enable == 1)) {
-    this->callbacks.netlinkInputCallback = netlinkInputCallback;
+    this->::EmwApiCore::callbacks.netlinkInputCallback = netlinkInputCallback;
   }
   else {
-    this->callbacks.netlinkInputCallback = nullptr;
+    this->::EmwApiCore::callbacks.netlinkInputCallback = nullptr;
   }
-  if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(&command_data), sizeof(command_data),
-                          BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                          EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+  if (this->::EmwCoreIpc::request(BYTES_REF_CAST(&command_data), sizeof(command_data),
+                                  BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                  EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
     if (response_buffer.status == 0) {
       status = EmwApiBase::eEMW_STATUS_OK;
     }
@@ -70,7 +70,7 @@ EmwApiBase::Status EmwApiEmwBypass::setByPass(std::int32_t enable,
 }
 
 EmwApiBase::Status EmwApiEmwBypass::output(std::uint8_t *dataPtr, std::uint16_t dataLength,
-    std::uint32_t interface) const noexcept
+    std::uint32_t interface) noexcept
 {
   EmwApiBase::Status status = EmwApiBase::eEMW_STATUS_ERROR;
 
@@ -99,9 +99,9 @@ EmwApiBase::Status EmwApiEmwBypass::output(std::uint8_t *dataPtr, std::uint16_t 
       command_data_ptr->bypassOutParams.idx = interface;
       command_data_ptr->bypassOutParams.dataLength = dataLength;
 
-      if (EmwCoreIpc::Request(*this, BYTES_REF_CAST(command_data_ptr), command_data_size,
-                              BYTES_REF_CAST(&response_buffer), response_buffer_size,
-                              EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
+      if (this->::EmwCoreIpc::request(BYTES_REF_CAST(command_data_ptr), command_data_size,
+                                      BYTES_REF_CAST(&response_buffer), response_buffer_size,
+                                      EmwCoreIpc::EMW_CMD_TIMEOUT) == EmwCoreIpc::eSUCCESS) {
         if (response_buffer.status == 0) {
           status = EmwApiBase::eEMW_STATUS_OK;
         }

@@ -1,0 +1,27 @@
+[MASTER]
+# Enable all optional checkers
+## ,pylint.extensions.emptystring
+load-plugins=pylint.extensions.docparams,pylint.extensions.bad_builtin,pylint.extensions.check_elif,pylint.extensions.overlapping_exceptions,pylint.extensions.redefined_variable_type
+
+
+[MESSAGES CONTROL]
+# Disable nothing — catch everything
+disable=
+
+[REPORTS]
+# Show full report
+reports=yes
+
+[FORMAT]
+max-line-length=100
+indent-string='    '
+
+[TYPECHECK]
+# Fail on missing imports
+## ignore-missing-imports=no
+
+[DESIGN]
+max-args=5
+max-branches=10
+max-locals=15
+max-statements=50
